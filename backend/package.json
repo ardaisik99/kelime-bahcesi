@@ -1,0 +1,21 @@
+{
+  "name": "tamlama-multiplayer-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Authoritative WebSocket room backend for the bilingual Tamlama game.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node local-server.mjs",
+    "test": "node --test",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "ws": "8.22.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.154.0"
+  }
+}

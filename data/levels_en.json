@@ -1,0 +1,247 @@
+{
+	"language": "en",
+	"version": 1,
+	"categories": [
+		{ "id": "kitchen", "name_key": "category.kitchen" },
+		{ "id": "nature", "name_key": "category.nature" },
+		{ "id": "daily", "name_key": "category.daily" }
+	],
+	"levels": [
+		{
+			"id": "en_kitchen_ice_cream_soda",
+			"category": "kitchen",
+			"title": "Old-fashioned soda",
+			"words": ["ICE", "CREAM", "SODA", "POP"],
+			"hints": [
+				"Frozen water",
+				"Rich dairy product used in desserts",
+				"Fizzy soft drink",
+				"Sweet carbonated drink"
+			],
+			"links": ["ice cream", "cream soda", "soda pop"]
+		},
+		{
+			"id": "en_kitchen_jacket_potato",
+			"category": "kitchen",
+			"title": "Lunch plate",
+			"words": ["JACKET", "POTATO", "SALAD", "DRESSING"],
+			"hints": [
+				"Outer clothing; also a potato cooked in its skin",
+				"Starchy root vegetable",
+				"Cold vegetable dish",
+				"Sauce poured over a salad"
+			],
+			"links": ["jacket potato", "potato salad", "salad dressing"]
+		},
+		{
+			"id": "en_kitchen_rice_noodle_soup",
+			"category": "kitchen",
+			"title": "Warm noodle bowl",
+			"words": ["RICE", "NOODLE", "SOUP", "BOWL"],
+			"hints": [
+				"White or brown grain",
+				"Long strip of dough",
+				"Warm liquid dish",
+				"Round dish for soup"
+			],
+			"links": ["rice noodle", "noodle soup", "soup bowl"]
+		},
+		{
+			"id": "en_kitchen_sugar_cookie",
+			"category": "kitchen",
+			"title": "Cookie jar",
+			"words": ["SUGAR", "COOKIE", "JAR", "OPENER"],
+			"hints": [
+				"Sweet white crystals",
+				"Small baked sweet treat",
+				"Glass container with a lid",
+				"Tool for removing a lid"
+			],
+			"links": ["sugar cookie", "cookie jar", "jar opener"]
+		},
+		{
+			"id": "en_kitchen_pot_roast",
+			"category": "kitchen",
+			"title": "Sunday sandwich",
+			"words": ["POT", "ROAST", "BEEF", "SANDWICH"],
+			"hints": [
+				"Deep cooking vessel",
+				"Meat cooked in an oven",
+				"Meat from cattle",
+				"Food between two slices of bread"
+			],
+			"links": ["pot roast", "roast beef", "beef sandwich"]
+		},
+		{
+			"id": "en_kitchen_potato_chip",
+			"category": "kitchen",
+			"title": "Snack bowl",
+			"words": ["POTATO", "CHIP", "DIP", "BOWL"],
+			"hints": [
+				"Root vegetable used for fries",
+				"Thin fried slice of potato",
+				"Thick sauce for dipping",
+				"Shallow dish for snacks"
+			],
+			"links": ["potato chip", "chip dip", "dip bowl"]
+		},
+		{
+			"id": "en_nature_pine_tree",
+			"category": "nature",
+			"title": "Woodland home",
+			"words": ["PINE", "TREE", "HOUSE", "PLANT"],
+			"hints": [
+				"Evergreen conifer with needles",
+				"Tall woody plant",
+				"Building where people live",
+				"Living thing that grows in soil"
+			],
+			"links": ["pine tree", "tree house", "house plant"]
+		},
+		{
+			"id": "en_nature_water_lily",
+			"category": "nature",
+			"title": "Still pond",
+			"words": ["WATER", "LILY", "POND", "SKATER"],
+			"hints": [
+				"Clear liquid essential to life",
+				"Flower that floats on water",
+				"Small body of still water",
+				"One who glides on a surface"
+			],
+			"links": ["water lily", "lily pond", "pond skater"]
+		},
+		{
+			"id": "en_nature_sand_dune",
+			"category": "nature",
+			"title": "Desert ride",
+			"words": ["SAND", "DUNE", "BUGGY", "WHIP"],
+			"hints": [
+				"Tiny grains on a beach",
+				"Hill of drifted sand",
+				"Small open vehicle",
+				"Long cord used to urge an animal"
+			],
+			"links": ["sand dune", "dune buggy", "buggy whip"]
+		},
+		{
+			"id": "en_nature_flower_pot",
+			"category": "nature",
+			"title": "Windowsill garden",
+			"words": ["FLOWER", "POT", "PLANT", "FOOD"],
+			"hints": [
+				"Colorful bloom",
+				"Round container for plants",
+				"Green living organism",
+				"What living things eat"
+			],
+			"links": ["flower pot", "pot plant", "plant food"]
+		},
+		{
+			"id": "en_nature_food_chain",
+			"category": "nature",
+			"title": "Field study",
+			"words": ["PLANT", "FOOD", "CHAIN", "LINK"],
+			"hints": [
+				"Organism that makes its own food",
+				"Source of energy for animals",
+				"Series of connected things",
+				"One ring of a chain"
+			],
+			"links": ["plant food", "food chain", "chain link"]
+		},
+		{
+			"id": "en_nature_winter_storm",
+			"category": "nature",
+			"title": "Cold snap",
+			"words": ["WINTER", "STORM", "FRONT", "DOOR"],
+			"hints": [
+				"Coldest season",
+				"Violent weather",
+				"Boundary between air masses",
+				"Panel that opens an entrance"
+			],
+			"links": ["winter storm", "storm front", "front door"]
+		},
+		{
+			"id": "en_daily_book_club",
+			"category": "daily",
+			"title": "Club meeting",
+			"words": ["BOOK", "CLUB", "SANDWICH", "BOARD", "GAME"],
+			"hints": [
+				"Printed pages bound together",
+				"Group with a shared interest",
+				"Filling between slices of bread",
+				"Flat piece of wood or panel",
+				"Activity played for fun"
+			],
+			"links": ["book club", "club sandwich", "sandwich board", "board game"]
+		},
+		{
+			"id": "en_daily_lift_ticket",
+			"category": "daily",
+			"title": "Ski weekend",
+			"words": ["LIFT", "TICKET", "OFFICE", "PARTY", "LINE"],
+			"hints": [
+				"Ride up a slope",
+				"Proof of payment for entry",
+				"Room where people work",
+				"Social gathering",
+				"A shared telephone connection; also a long narrow mark"
+			],
+			"links": ["lift ticket", "ticket office", "office party", "party line"]
+		},
+		{
+			"id": "en_daily_garage_sale",
+			"category": "daily",
+			"title": "Saturday sale",
+			"words": ["GARAGE", "SALE", "PRICE", "TAG"],
+			"hints": [
+				"Building for a car",
+				"Exchange of goods for money",
+				"Amount of money asked",
+				"Small label attached to something"
+			],
+			"links": ["garage sale", "sale price", "price tag"]
+		},
+		{
+			"id": "en_daily_school_bus",
+			"category": "daily",
+			"title": "Morning route",
+			"words": ["SCHOOL", "BUS", "STOP", "SIGN"],
+			"hints": [
+				"Place where children learn",
+				"Large vehicle for passengers",
+				"Cease moving",
+				"Board giving information"
+			],
+			"links": ["school bus", "bus stop", "stop sign"]
+		},
+		{
+			"id": "en_daily_coffee_break",
+			"category": "daily",
+			"title": "Office break",
+			"words": ["COFFEE", "BREAK", "ROOM", "KEY"],
+			"hints": [
+				"Hot drink made from roasted beans",
+				"Short rest from work",
+				"Enclosed space inside a building",
+				"Metal object that opens a lock"
+			],
+			"links": ["coffee break", "break room", "room key"]
+		},
+		{
+			"id": "en_daily_fire_alarm",
+			"category": "daily",
+			"title": "Town centre",
+			"words": ["FIRE", "ALARM", "CLOCK", "TOWER"],
+			"hints": [
+				"Burning flames",
+				"Warning sound",
+				"Device that shows time",
+				"Tall narrow building"
+			],
+			"links": ["fire alarm", "alarm clock", "clock tower"]
+		}
+	]
+}

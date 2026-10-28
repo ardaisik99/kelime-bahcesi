@@ -1,0 +1,251 @@
+{
+	"language": "tr",
+	"version": 1,
+	"categories": [
+		{ "id": "kitchen", "name_key": "category.kitchen" },
+		{ "id": "nature", "name_key": "category.nature" },
+		{ "id": "daily", "name_key": "category.daily" }
+	],
+	"levels": [
+		{
+			"id": "tr_kitchen_tea_time",
+			"category": "kitchen",
+			"title": "Çay keyfi",
+			"words": ["ÇAY", "KAŞIK", "OYUN", "HAVA"],
+			"hints": [
+				"Demlikte demlenen sıcak içecek",
+				"Çorbayı karıştırmaya yarayan mutfak aracı",
+				"Kurallarla oynanan eğlence",
+				"Oyun oynarken çalınan ezgi; atmosfer anlamı da vardır"
+			],
+			"links": ["çay kaşığı", "kaşık oyunu", "oyun havası"]
+		},
+		{
+			"id": "tr_kitchen_lemon_water",
+			"category": "kitchen",
+			"title": "Limonata hazırlığı",
+			"words": ["LİMON", "SU", "BARDAK", "ALTLIK"],
+			"hints": [
+				"Ekşi, sarı kabuklu meyve",
+				"İçeceklerin temel maddesi olan renksiz sıvı",
+				"İçecek konulan kap",
+				"Bardağın altına konan küçük koruyucu parça"
+			],
+			"links": ["limon suyu", "su bardağı", "bardak altlığı"]
+		},
+		{
+			"id": "tr_kitchen_fish_bread",
+			"category": "kitchen",
+			"title": "Fırın hazırlığı",
+			"words": ["BUĞDAY", "EKMEK", "FIRIN", "KÜREK"],
+			"hints": [
+				"Un yapımında kullanılan tahıl tanesi",
+				"Un, su ve mayayla yapılan temel gıda",
+				"Ekmek pişirilen ocak",
+				"Fırından tepsi çekmeye yarayan uzun saplı araç"
+			],
+			"links": ["buğday ekmeği", "ekmek fırını", "fırın küreği"]
+		},
+		{
+			"id": "tr_kitchen_flower_honey",
+			"category": "kitchen",
+			"title": "Kahvaltı sofrası",
+			"words": ["ÇİÇEK", "BAL", "KAVANOZ", "KAPAK"],
+			"hints": [
+				"Bitkilerin renkli üreme organı",
+				"Arıların çiçeklerden topladığı tatlı madde",
+				"Kapağı olan cam saklama kabı",
+				"Kabın ağzını örten parça"
+			],
+			"links": ["çiçek balı", "bal kavanozu", "kavanoz kapağı"]
+		},
+		{
+			"id": "tr_kitchen_dinner_table",
+			"category": "kitchen",
+			"title": "Akşam yemeği",
+			"words": ["YEMEK", "MASA", "LAMBA", "IŞIK"],
+			"hints": [
+				"Günün öğününde yenilen yiyecek",
+				"Üzerine eşya konan ayaklı düz mobilya",
+				"Elektrikle aydınlatan araç",
+				"Gözle görülen aydınlık"
+			],
+			"links": ["yemek masası", "masa lambası", "lamba ışığı"]
+		},
+		{
+			"id": "tr_kitchen_tea_house",
+			"category": "kitchen",
+			"title": "Takvim yaprağı",
+			"words": ["ÇAY", "OCAK", "AY", "TAKVİM", "YAPRAK"],
+			"hints": [
+				"Sabah kahvaltısında içilen sıcak içecek",
+				"Yemek pişirilen yer; yılın ilk ayı",
+				"Takvimin on iki bölümünden biri",
+				"Günleri ve ayları gösteren çizelge",
+				"Ağacın yeşil organı"
+			],
+			"links": ["çay ocağı", "ocak ayı", "ay takvimi", "takvim yaprağı"]
+		},
+		{
+			"id": "tr_nature_rain_drop",
+			"category": "nature",
+			"title": "Yağmur sonrası",
+			"words": ["YAĞMUR", "DAMLA", "SAKIZ", "AĞAÇ", "KABUK"],
+			"hints": [
+				"Buluttan yere düşen su",
+				"Düşen küçük su parçası",
+				"Ağaçtan akan yapışkan madde",
+				"Gövdesi odunlu, dallı uzun bitki",
+				"Meyvenin veya ağacın dış örtüsü"
+			],
+			"links": ["yağmur damlası", "damla sakızı", "sakız ağacı", "ağaç kabuğu"]
+		},
+		{
+			"id": "tr_nature_bee_hive",
+			"category": "nature",
+			"title": "Arıların dünyası",
+			"words": ["BAL", "ARI", "KOVAN", "GİRİŞ", "KAPI"],
+			"hints": [
+				"Arıların yaptığı tatlı besin",
+				"Çiçeklerden nektar toplayan uçan böcek",
+				"Arıların yaşadığı yuva",
+				"Bir yere girilen yer",
+				"Girişi kapatan kanat"
+			],
+			"links": ["bal arısı", "arı kovanı", "kovan girişi", "giriş kapısı"]
+		},
+		{
+			"id": "tr_nature_sea_star",
+			"category": "nature",
+			"title": "Deniz bahçesi",
+			"words": ["DENİZ", "YILDIZ", "ÇİÇEK", "BAHÇE", "KAPI"],
+			"hints": [
+				"Tuzlu büyük su kütlesi",
+				"Gökyüzünde parlayan gök cismi",
+				"Bahçede yetişen renkli bitki",
+				"Çiçek ve sebze yetiştirilen yer",
+				"Bahçeye açılan geçit"
+			],
+			"links": ["deniz yıldızı", "yıldız çiçeği", "çiçek bahçesi", "bahçe kapısı"]
+		},
+		{
+			"id": "tr_nature_forest_fire",
+			"category": "nature",
+			"title": "Yangın gözetleme",
+			"words": ["ORMAN", "YANGIN", "KULE", "SAAT"],
+			"hints": [
+				"Ağaçlarla kaplı geniş arazi",
+				"Zarar veren büyük ateş",
+				"Yüksekten bakmaya yarayan yapı",
+				"Zamanı gösteren araç"
+			],
+			"links": ["orman yangını", "yangın kulesi", "kule saati"]
+		},
+		{
+			"id": "tr_nature_sea_lantern",
+			"category": "nature",
+			"title": "Kıyıda ışık",
+			"words": ["DENİZ", "FENER", "BALIK", "AĞ"],
+			"hints": [
+				"Dalgalı tuzlu su",
+				"Işık veren araç",
+				"Suda yaşayan hayvan",
+				"Balık tutmaya yarayan örgü"
+			],
+			"links": ["deniz feneri", "fener balığı", "balık ağı"]
+		},
+		{
+			"id": "tr_nature_river_bed",
+			"category": "nature",
+			"title": "Nehir kıyısında",
+			"words": ["NEHİR", "YATAK", "ODA", "MÜZİK"],
+			"hints": [
+				"Denize dökülen büyük akarsu",
+				"Uyumak için kullanılan eşya",
+				"Evin bölümlerinden biri",
+				"Seslerle oluşturulan sanat"
+			],
+			"links": ["nehir yatağı", "yatak odası", "oda müziği"]
+		},
+		{
+			"id": "tr_daily_book_cover",
+			"category": "daily",
+			"title": "Defter sayfası",
+			"words": ["KİTAP", "KAPAK", "RESİM", "DEFTER", "YAPRAK"],
+			"hints": [
+				"Okunacak sayfaları bir araya getiren yayın",
+				"Kitabın ön yüzünü koruyan parça",
+				"Kağıt üzerine yapılan görsel",
+				"Yazı yazılan sayfalı nesne",
+				"Defterdeki tek sayfa"
+			],
+			"links": ["kitap kapağı", "kapak resmi", "resim defteri", "defter yaprağı"]
+		},
+		{
+			"id": "tr_daily_coffee_machine",
+			"category": "daily",
+			"title": "Mühendislik sabahı",
+			"words": ["KAHVE", "MAKİNE", "MÜHENDİSLİK", "FAKÜLTE"],
+			"hints": [
+				"Kavrulmuş çekirdekten yapılan içecek",
+				"İşi kolaylaştıran düzenek",
+				"Teknik tasarım mesleği",
+				"Üniversitenin bölümü"
+			],
+			"links": ["kahve makinesi", "makine mühendisliği", "mühendislik fakültesi"]
+		},
+		{
+			"id": "tr_daily_bus_ticket",
+			"category": "daily",
+			"title": "Şehir içi yolculuk",
+			"words": ["OTOBÜS", "BİLET", "GİŞE", "MEMUR"],
+			"hints": [
+				"Yolcu taşıyan büyük kara aracı",
+				"Ulaşım için alınan kâğıt",
+				"Bilet satılan küçük büro",
+				"Devlet dairesinde çalışan görevli"
+			],
+			"links": ["otobüs bileti", "bilet gişesi", "gişe memuru"]
+		},
+		{
+			"id": "tr_daily_phone_screen",
+			"category": "daily",
+			"title": "Telefon tamiri",
+			"words": ["CEP", "TELEFON", "EKRAN", "KORUYUCU"],
+			"hints": [
+				"Pantolonun yanındaki küçük göz",
+				"Sesli iletişim aracı",
+				"Görüntüyü gösteren yüzey",
+				"Bir şeyi zarardan saklayan"
+			],
+			"links": ["cep telefonu", "telefon ekranı", "ekran koruyucusu"]
+		},
+		{
+			"id": "tr_daily_cinema_garden",
+			"category": "daily",
+			"title": "Sinemadan bahçeye",
+			"words": ["SİNEMA", "SALON", "BİTKİ", "ÇAY", "BAHÇE"],
+			"hints": [
+				"Film gösterilen yer",
+				"Geniş kapalı yer",
+				"Toprakta yetişen canlı",
+				"Demlenerek içilen sıcak içecek",
+				"Ağaç ve çiçek yetiştirilen alan"
+			],
+			"links": ["sinema salonu", "salon bitkisi", "bitki çayı", "çay bahçesi"]
+		},
+		{
+			"id": "tr_daily_wall_clock",
+			"category": "daily",
+			"title": "Kule saati",
+			"words": ["DUVAR", "SAAT", "KULE", "KAPI"],
+			"hints": [
+				"Odayı bölen dikey yapı",
+				"Zamanı ölçen araç",
+				"Yüksek yapı",
+				"Bir yere girilen açıklık"
+			],
+			"links": ["duvar saati", "saat kulesi", "kule kapısı"]
+		}
+	]
+}

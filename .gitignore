@@ -1,0 +1,44 @@
+# Godot 4 generated files
+.godot/
+.import/
+export.cfg
+*.translation
+
+# Signing material — never commit keys or credentials
+export_credentials.cfg
+.godot/export_credentials.cfg
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile
+
+# Exported builds (export presets write to builds/)
+builds/
+build/
+dist/
+*.pck
+*.zip
+*.apk
+*.aab
+*.ipa
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+*.tmp
+
+# Local network / tooling overrides
+config/network.local.json
+config/network.json
+.opencode/
+opencode.json
+__pycache__/
+*.pyc
+*.log
+.github-upload.json
