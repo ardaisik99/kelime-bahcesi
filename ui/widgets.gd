@@ -107,8 +107,9 @@ static func button(text: String, kind: String = "primary", height: float = 52.0)
 	b.add_theme_font_override("font", GardenTheme.bold_font())
 	b.add_theme_font_size_override("font_size", 17)
 	b.add_theme_color_override("font_color", ink)
+	b.add_theme_color_override("font_focus_color", ink)
 	b.add_theme_color_override("font_hover_color", ink)
-	b.add_theme_color_override("font_pressed_color", GardenTheme.WHITE if kind != "ghost" else ink)
+	b.add_theme_color_override("font_pressed_color", GardenTheme.WHITE if kind in ["primary", "pink", "danger"] else ink)
 	b.add_theme_color_override("font_disabled_color", GardenTheme.LOCKED_INK)
 	b.pressed.connect(func() -> void: GardenApi.play_sound("click"))
 	return b
@@ -154,7 +155,7 @@ static func chip(text: String, bg: Color = GardenTheme.LAVENDER_SOFT,
 
 
 static func coin_chip(amount: int) -> PanelContainer:
-	return chip(str(amount), GardenTheme.YELLOW_SOFT, Color("6a4d10"), GardenPaint.CoinIcon.new())
+	return chip(str(amount), GardenTheme.YELLOW_SOFT, GardenTheme.LAVENDER_DEEP, GardenPaint.CoinIcon.new())
 
 
 static func progress_bar(value: float, maximum: float, color: Color = GardenTheme.LAVENDER,
@@ -181,7 +182,7 @@ static func progress_bar(value: float, maximum: float, color: Color = GardenThem
 
 
 static func line_edit(placeholder: String, text: String = "", max_length: int = 32) -> LineEdit:
-	var e := LineEdit.new()
+	var e := DeviceLineEdit.new()
 	e.placeholder_text = placeholder
 	e.text = text
 	e.max_length = max_length

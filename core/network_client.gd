@@ -81,6 +81,7 @@ var _server_anchor_ticks: int = 0
 
 func _ready() -> void:
 	url = resolve_url()
+	set_process(false)
 
 
 func set_url(ws_url: String) -> void:
@@ -128,6 +129,7 @@ func server_now_msec() -> int:
 
 
 func connect_to_server(ws_url: String = "") -> bool:
+	set_process(true)
 	if not ws_url.strip_edges().is_empty():
 		set_url(ws_url)
 	elif url.strip_edges().is_empty():
@@ -161,6 +163,7 @@ func connect_to_server(ws_url: String = "") -> bool:
 
 
 func disconnect_from_server(send_leave: bool = true) -> void:
+	set_process(false)
 	if _ws == null:
 		status = "closed"
 		return

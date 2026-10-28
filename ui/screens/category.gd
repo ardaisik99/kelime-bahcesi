@@ -55,7 +55,7 @@ func _build() -> void:
 		content.add_child(_empty_state(lang))
 	else:
 		for i in levels.size():
-			var unlocked := i == 0 or bool(completed[i - 1])
+			var unlocked := bool(completed[i]) or i == 0 or bool(completed[i - 1])
 			content.add_child(_level_card(levels[i], i, bool(completed[i]), unlocked, lang))
 		var note := GardenWidgets.caption(GardenLoc.t("language_levels_note", lang), GardenTheme.LOCKED_INK, HORIZONTAL_ALIGNMENT_CENTER)
 		content.add_child(note)
@@ -72,7 +72,7 @@ func _header(lang: String, category_id: String) -> Control:
 	v.add_theme_constant_override("separation", 6)
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", 10)
-	var flower := GardenPaint.FlowerMark.new()
+	var flower := GardenPaint.ChainIcon.new()
 	flower.petal_color = dark
 	flower.center_color = GardenTheme.CARD
 	flower.custom_minimum_size = Vector2(46, 50)
@@ -103,7 +103,7 @@ func _level_card(level: Dictionary, index: int, completed: bool, unlocked: bool,
 	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	var base := GardenTheme.CARD
 	if completed:
-		base = Color("f2fbf6")
+		base = GardenTheme.LAVENDER_SOFT
 	elif not unlocked:
 		base = Color("f3f0f7")
 	card.add_theme_stylebox_override("normal", GardenTheme.panel_style(base, 20, not completed, GardenTheme.LINE if not completed else GardenTheme.MINT, 1))
@@ -168,16 +168,17 @@ func _level_card(level: Dictionary, index: int, completed: bool, unlocked: bool,
 		l.add_child(GardenWidgets.caption(GardenLoc.t("locked", lang), GardenTheme.LOCKED_INK))
 		v.add_child(l)
 	else:
-		var detail := GardenLoc.f("word_count", [words.size()], lang)
+		var difficulty := int(level.get("difficulty", 1))
+		var names := ["", "Kolay", "Orta", "Zor"] if lang == "tr" else ["", "Easy", "Medium", "Hard"]
+		var detail := str(names[clampi(difficulty, 1, 3)]) + "  ·  " + GardenLoc.f("word_count", [words.size()], lang)
 		if not words.is_empty():
 			detail += "  ·  " + GardenApi.upper_tr(str(words[0].get("word", "")))
 		v.add_child(GardenWidgets.caption(detail, GardenTheme.MUTED))
 	row.add_child(v)
 
 	if unlocked:
-		var go := "↻" if completed else "→"
-		var arrow := GardenWidgets.bold_label(go, 18, GardenTheme.LAVENDER_DEEP if not completed else GardenTheme.MINT_DEEP, HORIZONTAL_ALIGNMENT_RIGHT)
-		arrow.custom_minimum_size = Vector2(22, 0)
+		var arrow := GardenPaint.icon(10, 22)
+		arrow.flip_h = true
 		arrow.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		row.add_child(arrow)
 	else:
@@ -210,7 +211,7 @@ func _soft(color_name: String) -> Color:
 		"yellow":
 			return GardenTheme.YELLOW_SOFT
 		"mint":
-			return Color("e8f8ef")
+			return GardenTheme.LAVENDER_SOFT
 		_:
 			return GardenTheme.LAVENDER_SOFT
 

@@ -29,7 +29,13 @@ var _victory_open := false
 var _box: VBoxContainer
 var _scroll: ScrollContainer
 var _chain_view: GardenChainView
-var _keyboard: GardenKeyboard
+var _keyboard: Control
+var _answer_input: LineEdit
+var _submit_button: Button
+var _tutorial := false
+var _tutorial_copy: Label
+var _transitioning := false
+var _pending_victory := false
 var _progress_label: Label
 var _progress_bar: ProgressBar
 var _title_label: Label
@@ -39,8 +45,11 @@ var _reveal_button: Button
 var _victory_layer: Control
 var _focus_target: Control
 var _feedback_serial := 0
+var _actions_row: Control
+var _keyboard_caption: Control
 var _first_clear := false
 var _reward := 0
+var _last_scrolled_index := -2
 
 
 ## Party mode must never touch real progress or award completion coins. This
@@ -81,6 +90,7 @@ class PartyStore:
 
 
 func setup(params: Dictionary = {}) -> void:
+	_tutorial = bool(params.get("tutorial", false))
 	_mode = "party" if str(params.get("mode", "")) == "party" else "level"
 	_lang = GardenApi.lang()
 	_category = params.get("category", {})
@@ -97,11 +107,13 @@ func setup(params: Dictionary = {}) -> void:
 	_words = _level.get("words", [])
 	_reset_round()
 	_start_session()
-	if _mode == "level" and not _level.is_empty():
+	if _mode == "level" and not _tutorial and not _level.is_empty():
 		var store := GardenApi.save_store()
 		if store != null:
 			store.call("set_last_level", _lang, str(_level.get("id", "")))
 	_build()
+	resized.connect(_adjust_compact_layout)
+	_adjust_compact_layout.call_deferred()
 
 
 func _reset_round() -> void:
@@ -125,7 +137,7 @@ func _start_session() -> bool:
 	if _level.is_empty() or _words.is_empty():
 		return false
 	var created: Variant = null
-	if _mode == "party":
+	if _mode == "party" or _tutorial:
 		created = GardenApi.create_session(PartyStore.new())
 	else:
 		created = GardenApi.create_session()
@@ -179,47 +191,55 @@ func _sync_from_session() -> void:
 	if _session == null:
 		return
 	var s: Variant = _session
-	var state: Dictionary = s.get_state()
-	_current = int(state.get("current_word_index", -1))
+	_current = int(s.active_word_index())
 	_revealed = _active_locked_count()
 	_hint_text = str(s.get_active_hint())
-	if bool(state.get("won", false)):
+	if bool(s.won):
 		_finished = true
 
 
 func _refresh_from_session() -> void:
 	_sync_from_session()
+	if _transitioning:
+		return
 	if _chain_view != null and is_instance_valid(_chain_view) and _session != null:
 		_chain_view.setup_session(_session, _level, _mode == "party", _mode == "party")
-		_chain_view.scroll_to_current(_scroll)
+		if _current != _last_scrolled_index:
+			_last_scrolled_index = _current
+			_chain_view.scroll_to_current(_scroll)
 	_update_header()
+	_update_native_state()
 
 
 func _on_state_changed() -> void:
 	_refresh_from_session()
 
 
-func _on_word_solved(_index: int) -> void:
+func _on_word_solved(index: int) -> void:
 	_busy = true
-	if _keyboard != null:
-		_keyboard.set_enabled(false)
-	_update_header()
-	_show_feedback(GardenLoc.t("correct", _lang), GardenTheme.MINT_DEEP)
+	_transitioning = true
+	_update_native_state()
 	GardenApi.play_sound("correct")
-	if OS.has_feature("mobile"):
-		Input.vibrate_handheld(25)
-	var timer := get_tree().create_timer(0.42)
-	timer.timeout.connect(_clear_busy)
+	_finish_word_transition.call_deferred(index)
+
+
+func _finish_word_transition(index: int) -> void:
+	if _chain_view != null:
+		_chain_view.setup_session(_session, _level, false, false)
+		await _chain_view.morph_word(index, str(_session.words[index]), str((_words[index] as Dictionary).get("word", "")))
+	if not is_inside_tree():
+		return
+	_transitioning = false
+	_busy = false
+	if _answer_input != null:
+		_answer_input.text = ""
+	_refresh_from_session()
+	if _pending_victory:
+		_show_victory()
 
 
 func _clear_busy() -> void:
-	if not is_instance_valid(self):
-		return
 	_busy = false
-	if _finished or _victory_open:
-		return
-	if _keyboard != null:
-		_keyboard.set_enabled(true)
 	_update_header()
 
 
@@ -278,14 +298,16 @@ func _on_level_won(coins_awarded: int, first_clear: bool, _total_coins: int) -> 
 	_busy = false
 	_first_clear = first_clear
 	_reward = coins_awarded
-	if _keyboard != null:
-		_keyboard.set_enabled(false)
+	if _answer_input != null:
+		_answer_input.editable = false
 	if app != null:
 		app.update_coins()
 	if first_clear and app != null:
 		app.celebrate(Vector2(size.x * 0.5, size.y * 0.28))
 	GardenApi.play_sound("win")
-	_show_victory()
+	_pending_victory = true
+	if not _transitioning:
+		_show_victory()
 
 
 # ---------------------------------------------------------------------------
@@ -303,6 +325,8 @@ func _build() -> void:
 	_keyboard = null
 	_chain_view = null
 	_scroll = null
+	_actions_row = null
+	_keyboard_caption = null
 	if _session == null or _level.is_empty() or _words.is_empty():
 		_build_empty()
 		return
@@ -349,13 +373,60 @@ func _build() -> void:
 		_focus_target = next
 		return
 
-	_keyboard = GardenKeyboard.new()
-	_keyboard.setup(_lang)
-	_keyboard.letter_pressed.connect(_on_letter)
-	_keyboard.backspace_pressed.connect(_on_backspace)
-	_keyboard.submit_pressed.connect(_on_submit)
-	_box.add_child(_keyboard)
-	_keyboard.set_enabled(not _busy and not _finished)
+	if _tutorial:
+		_tutorial_copy = GardenWidgets.label("", 15, GardenTheme.LAVENDER_DEEP, HORIZONTAL_ALIGNMENT_LEFT, true)
+		_box.add_child(_tutorial_copy)
+	var input_row := HBoxContainer.new()
+	input_row.add_theme_constant_override("separation", 8)
+	_answer_input = GardenWidgets.line_edit("Cevabını yaz…" if _lang == "tr" else "Type your answer…", "", 24)
+	_answer_input.virtual_keyboard_enabled = true
+	_answer_input.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_DEFAULT
+	_answer_input.emoji_menu_enabled = false
+	_answer_input.keep_editing_on_text_submit = true
+	_answer_input.text_changed.connect(_on_native_changed)
+	_answer_input.text_submitted.connect(func(_text: String) -> void: _on_submit())
+	input_row.add_child(_answer_input)
+	_submit_button = GardenWidgets.button("Gönder" if _lang == "tr" else "Send", "primary", 50)
+	_submit_button.focus_mode = Control.FOCUS_NONE
+	_submit_button.pressed.connect(_on_submit)
+	input_row.add_child(_submit_button)
+	_box.add_child(input_row)
+	_keyboard_caption = GardenWidgets.label("Telefonunun klavyesiyle yaz." if _lang == "tr" else "Use your device keyboard.", 12, GardenTheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER)
+	_box.add_child(_keyboard_caption)
+	_chain_view.card_tapped.connect(func(index: int) -> void:
+		if index == _active_index():
+			_answer_input.grab_focus())
+	_update_native_state()
+
+
+func _adjust_compact_layout() -> void:
+	var compact := size.y < 570
+	for control in [_title_label, _actions_row, _feedback, _keyboard_caption]:
+		if is_instance_valid(control):
+			control.visible = not compact
+
+
+func _on_native_changed(value: String) -> void:
+	if _busy or _finished or _session == null:
+		return
+	# Accept whole words from native keyboards, paste, dictation and IME.
+	# No key-event simulation, guessing or automatic Turkish suffix stripping.
+	_session.set_active_input(value)
+
+
+func _update_native_state() -> void:
+	if _answer_input == null or not is_instance_valid(_answer_input):
+		return
+	_answer_input.editable = not _busy and not _finished
+	if _submit_button != null:
+		_submit_button.disabled = _busy or _finished
+	if _tutorial_copy != null and is_instance_valid(_tutorial_copy) and _active_index() > 0:
+		var i := _active_index()
+		if _lang == "tr":
+			var explanations := ["", "1 / 3   SU ile bir tamlama kur: su BARDAĞI. Cevabını tam yazıp Gönder'e dokun.", "2 / 3   BARDAĞI, BARDAK oldu. Şimdi bardak ALTLIĞI. ALTLIĞI yaz ve gönder.", "3 / 3   ALTLIĞI, ALTLIK oldu. Şimdi altlık KENARI. KENARI yaz ve zinciri tamamla."]
+			_tutorial_copy.text = explanations[mini(i, 3)]
+		else:
+			_tutorial_copy.text = str(_session.hints[i])
 
 
 func _build_empty() -> void:
@@ -402,8 +473,9 @@ func _header() -> Control:
 	if _mode == "party":
 		v.add_child(GardenWidgets.caption(GardenLoc.t("party_tip", _lang), GardenTheme.MUTED))
 	# Party mode is purchase-free: no hints and no letter reveals.
-	if _mode != "party":
+	if _mode != "party" and not _tutorial:
 		var actions := HBoxContainer.new()
+		_actions_row = actions
 		actions.add_theme_constant_override("separation", 6)
 		_hint_button = GardenWidgets.small_button("", "yellow", 34)
 		_hint_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -503,7 +575,7 @@ func _on_submit() -> void:
 
 
 func _purchases_allowed() -> bool:
-	return _mode != "party" and not _busy and not _finished and not _victory_open and _session != null
+	return _mode != "party" and not _tutorial and not _busy and not _finished and not _victory_open and _session != null
 
 
 func _buy_hint() -> void:
@@ -541,6 +613,13 @@ func _buy_letter() -> void:
 # ---------------------------------------------------------------------------
 
 func _show_victory() -> void:
+	if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):
+		DisplayServer.virtual_keyboard_hide()
+	if _answer_input != null:
+		_answer_input.release_focus()
+		_answer_input.hide()
+	if _tutorial:
+		GardenApi.set_pref("tutorial_v2_" + _lang, true)
 	if _victory_layer != null and is_instance_valid(_victory_layer):
 		remove_child(_victory_layer)
 		_victory_layer.queue_free()
@@ -572,11 +651,13 @@ func _show_victory() -> void:
 	v.add_theme_constant_override("separation", 9)
 	card.add_child(v)
 
-	var mascot := GardenPaint.Mascot.new()
+	var mascot := GardenPaint.TrophyIcon.new()
 	mascot.custom_minimum_size = Vector2(88, 92)
 	mascot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(mascot)
 	var headline := GardenLoc.t("party_finished", _lang) if _mode == "party" else GardenLoc.t("victory_title", _lang)
+	if _tutorial:
+		headline = "Artık hazırsın!" if _lang == "tr" else "You are ready!"
 	v.add_child(GardenWidgets.title(headline, 27, GardenTheme.INK, HORIZONTAL_ALIGNMENT_CENTER))
 	v.add_child(GardenWidgets.label(GardenLoc.t("victory_sub", _lang), 14, GardenTheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER, true))
 	var chips := HBoxContainer.new()
@@ -584,7 +665,7 @@ func _show_victory() -> void:
 	chips.add_theme_constant_override("separation", 6)
 	chips.add_child(GardenWidgets.chip("%d / %d" % [_words.size(), _words.size()], GardenTheme.LAVENDER_SOFT, GardenTheme.LAVENDER_DEEP))
 	if _first_clear:
-		var reward_chip := GardenWidgets.chip(GardenLoc.f("first_clear_reward", [_reward], _lang), GardenTheme.YELLOW_SOFT, Color("6a4d10"), GardenPaint.CoinIcon.new())
+		var reward_chip := GardenWidgets.chip(GardenLoc.f("first_clear_reward", [_reward], _lang), GardenTheme.YELLOW_SOFT, GardenTheme.LAVENDER_DEEP, GardenPaint.CoinIcon.new())
 		chips.add_child(reward_chip)
 	elif _mode == "level":
 		chips.add_child(GardenWidgets.chip(GardenLoc.t("completed", _lang), GardenTheme.MINT, GardenTheme.MINT_DEEP.darkened(0.3)))
@@ -617,7 +698,10 @@ func _show_victory() -> void:
 
 	var next := GardenApi.next_level(_lang, _level.get("id", "")) if _mode == "level" else GardenApi.party_level(_lang, str(_level.get("id", "")))
 	var next_button: Button
-	if _mode == "party":
+	if _tutorial:
+		next_button = GardenWidgets.button("Oynamaya başla" if _lang == "tr" else "Start playing", "primary", 48)
+		next_button.pressed.connect(func() -> void: app.goto_home())
+	elif _mode == "party":
 		next_button = GardenWidgets.button(GardenLoc.t("party_next", _lang), "primary", 48)
 		next_button.pressed.connect(func() -> void:
 			_close_victory()
@@ -638,8 +722,10 @@ func _show_victory() -> void:
 	back.pressed.connect(func() -> void:
 		if app != null:
 			app.force_back())
-	if _mode == "level" and not next.is_empty():
+	if _mode == "level" and not _tutorial and not next.is_empty():
 		v.add_child(back)
+	else:
+		back.queue_free()
 	GardenWidgets.focus(next_button)
 
 
@@ -742,39 +828,15 @@ func _input(event: InputEvent) -> void:
 		_next_party_chain()
 
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if app != null and bool(app.call("_modal_open")):
-		return
-	if _mode == "party":
-		return
-	if _victory_open:
-		if event is InputEventKey and event.pressed and not event.echo:
-			var vk := event as InputEventKey
-			if vk.keycode in [KEY_ENTER, KEY_KP_ENTER]:
-				get_viewport().set_input_as_handled()
-				var focus := get_viewport().gui_get_focus_owner()
-				if focus is Button:
-					(focus as Button).pressed.emit()
-		return
-	if event is InputEventKey:
-		var key := event as InputEventKey
-		if not key.pressed or key.echo:
-			return
-		if key.keycode in [KEY_ENTER, KEY_KP_ENTER]:
-			get_viewport().set_input_as_handled()
-			_on_submit()
-			return
-		if key.keycode == KEY_BACKSPACE:
-			get_viewport().set_input_as_handled()
-			_on_backspace()
-			return
-		var ch := char(key.unicode)
-		if ch.is_empty() or key.unicode == 0:
-			return
-		var up := GardenApi.upper(ch, _lang)
-		var alphabet := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		if _lang == "tr":
-			alphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
-		if up.length() == 1 and alphabet.contains(up):
-			get_viewport().set_input_as_handled()
-			_on_letter(up)
+func _unhandled_key_input(_event: InputEvent) -> void:
+	pass
+
+
+func _exit_tree() -> void:
+	if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):
+		DisplayServer.virtual_keyboard_hide()
+
+
+func set_input_obscured(obscured: bool) -> void:
+	if is_instance_valid(_answer_input) and not _finished:
+		_answer_input.visible = not obscured

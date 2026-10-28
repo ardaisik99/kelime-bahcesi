@@ -43,7 +43,7 @@ extends RefCounted
 ## Read-only properties:
 ##   words, hints, links, language, level_id, coins, won, first_clear,
 ##   coins_awarded, wrong_attempts, save_error,
-##   current (active word root), current_mask, mask, current_word_index,
+##   roots (immutable roots), current (active expected answer), current_mask, mask, current_word_index,
 ##   chain_complete, solved_word_count.
 ##
 ## Semantics:
@@ -91,6 +91,7 @@ var language: String = "tr"
 var level: Dictionary = {}
 var level_id: String = ""
 var words: Array[String] = []
+var roots: Array[String] = []
 var hints: Array[String] = []
 var links: Array[String] = []
 var coins: int = DEFAULT_COINS
@@ -108,6 +109,7 @@ var _locked: Array[bool] = []
 var _solved: Array[bool] = []
 var _word_starts: Array[int] = []
 var _hints_shown: Array[bool] = []
+var _native_invalid := false
 var _cursor: int = 0
 var _current: int = -1
 var _local_completed: Dictionary = {}
@@ -310,6 +312,14 @@ func start(level_data: Variant, lang: String = "") -> bool:
 		var fallback_link: String = entry_links[links.size()] if links.size() < entry_links.size() else ""
 		links.append(fallback_link)
 
+	roots.assign(words)
+	# Content keeps immutable roots. Solo mobile play asks for the actual noun compound.
+	if language == "tr" and bool(resolved.get("inflected_answers", false)):
+		for i in range(1, words.size()):
+			if i - 1 < links.size() and links[i - 1].contains(" "):
+				var answer := links[i - 1].get_slice(" ", 1)
+				words[i] = answer.replace("i", "İ").replace("ı", "I").to_upper()
+
 	_chars.clear()
 	_locked.clear()
 	_solved.clear()
@@ -323,6 +333,7 @@ func start(level_data: Variant, lang: String = "") -> bool:
 			_chars.append("")
 			_locked.append(false)
 
+	_native_invalid = false
 	_cursor = 0
 	_current = -1
 	won = false
@@ -371,6 +382,10 @@ func active_word_index() -> int:
 	if not started or won or _current < 0 or _current >= words.size():
 		return -1
 	return _current
+
+
+func current_letter_index() -> int:
+	return _cursor - _word_starts[_current] if _current >= 0 else -1
 
 
 func word_start(index: int) -> int:
@@ -440,7 +455,7 @@ func is_chain_completed() -> bool:
 
 
 func can_submit() -> bool:
-	return started and not won and _current >= 0 and is_word_complete(_current)
+	return started and not won and not _native_invalid and _current >= 0 and is_word_complete(_current)
 
 
 func typed_word(index: int) -> String:
@@ -560,6 +575,31 @@ func type_letter(letter: String) -> bool:
 	return true
 
 
+func set_active_input(value: String) -> void:
+	if not started or won or _current < 0:
+		return
+	var normalized := ""
+	for ch in value.strip_edges():
+		normalized += _upper_letter(ch)
+	var start: int = _word_starts[_current]
+	var count: int = words[_current].length()
+	_native_invalid = normalized.length() > count
+	for ch in normalized:
+		if not _alphabet().contains(ch):
+			_native_invalid = true
+	for i in count:
+		if _locked[start + i]:
+			if i < normalized.length() and normalized.substr(i, 1) != _chars[start + i]:
+				_native_invalid = true
+			continue
+		var ch := normalized.substr(i, 1) if i < normalized.length() else ""
+		_chars[start + i] = ch if ch.is_empty() or _alphabet().contains(ch) else ""
+	_cursor = _first_writable_in_word(_current, start)
+	while _cursor < start + count and not _chars[_cursor].is_empty():
+		_cursor = _first_writable_in_word(_current, _cursor + 1)
+	state_changed.emit()
+
+
 func type_unicode(unicode: int) -> bool:
 	if unicode <= 0:
 		return false
@@ -596,6 +636,7 @@ func backspace() -> bool:
 
 
 func clear_input() -> void:
+	_native_invalid = false
 	if not started or won or _current < 0:
 		return
 	var start: int = _word_starts[_current]
@@ -730,7 +771,7 @@ func submit() -> bool:
 	if not is_word_complete(_current):
 		submit_blocked.emit("incomplete")
 		return false
-	if typed_word(_current) != words[_current]:
+	if _native_invalid or typed_word(_current) != words[_current]:
 		wrong_attempts += 1
 		answer_rejected.emit(typed_word(_current))
 		state_changed.emit()

@@ -1,3 +1,7 @@
+# 0.2 yerel profil güncellemesi
+
+Oyuncu adı, seçilen dil, öğretici durumu ve erişilebilirlik tercihleri yalnızca cihazdaki `garden_ui.json` dosyasında saklanır. Bölüm ilerlemesi ve altın `save.json` dosyasındadır. Ad ve dil Ayarlar üzerinden düzenlenebilir. Şu anda Online girişi bağlantı açmaz; oyuncu adı herhangi bir sunucuya gönderilmez. Aşağıdaki önceki online veri açıklamaları gelecekte yeniden etkinleştirilecek backend için referanstır.
+
 # Gizlilik Politikası / Privacy Policy — Kelime Bahçesi / Word Garden
 
 **Belge durumu:** Taslak — mağaza başvurusundan önce yayıncı tarafından doldurulması zorunlu alanlar vardır (bkz. bölüm 8).

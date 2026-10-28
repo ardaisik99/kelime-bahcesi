@@ -203,7 +203,8 @@ if (-not $SkipImport) {
 
 $testFiles = @(
     @{ Label = "core tests"; Relative = "tests/test_core.gd"; Mandatory = $true },
-    @{ Label = "content tests"; Relative = "tests/test_content.gd"; Mandatory = $true }
+    @{ Label = "content tests"; Relative = "tests/test_content.gd"; Mandatory = $true },
+    @{ Label = "compound tests"; Relative = "tests/test_compounds.gd"; Mandatory = $true }
 )
 
 if ($IncludeUI) {

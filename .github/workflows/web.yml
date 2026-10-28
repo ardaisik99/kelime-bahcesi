@@ -37,7 +37,7 @@ jobs:
         run: |
           godot --headless --path . --import 2>&1 | tee /tmp/garden-import.log
           if grep -E 'SCRIPT ERROR|Parse Error|^ERROR:' /tmp/garden-import.log; then exit 1; fi
-          for suite in core content ui; do
+          for suite in core content compounds ui; do
             godot --headless --path . --script "tests/test_${suite}.gd" 2>&1 | tee "/tmp/garden-${suite}.log"
             grep -q 'RESULT: PASS' "/tmp/garden-${suite}.log"
             if grep -E 'SCRIPT ERROR|^ERROR:|ObjectDB instances leaked' "/tmp/garden-${suite}.log"; then exit 1; fi

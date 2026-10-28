@@ -46,6 +46,8 @@ func setup(level_data: Dictionary, current: int, current_typed: String = "",
 ## Session-driven mode: masks, locked letters and hints come from the core.
 func setup_session(session_ref: Variant, level_data: Dictionary, links: bool = false,
 		party: bool = false) -> void:
+	var same_word: bool = session == session_ref and session_ref != null and current_index == int(session_ref.active_word_index()) and not _words.is_empty()
+	var same_hint: bool = hint_text == str(session_ref.get_active_hint()) if session_ref != null else false
 	session = session_ref
 	level = level_data
 	_words = level_data.get("words", [])
@@ -56,6 +58,9 @@ func setup_session(session_ref: Variant, level_data: Dictionary, links: bool = f
 		hint_text = str(session.get_active_hint())
 		typed = ""
 		revealed = 0
+	if same_word and same_hint and not party:
+		_fill_session_boxes(current_index)
+		return
 	rebuild()
 
 
@@ -162,7 +167,7 @@ func scroll_to_current(scroll: ScrollContainer) -> void:
 func _solved_card(index: int) -> PanelContainer:
 	var word := str(_words[index].get("word", ""))
 	var link := str(_words[index].get("link", ""))
-	var p := GardenWidgets.panel(Color("f2fbf6"), 20, false, 14, GardenTheme.MINT, 1)
+	var p := GardenWidgets.panel(GardenTheme.LAVENDER_SOFT, 20, false, 14, GardenTheme.MINT, 1)
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 4)
@@ -171,7 +176,8 @@ func _solved_card(index: int) -> PanelContainer:
 	var check := GardenPaint.CheckIcon.new()
 	check.custom_minimum_size = Vector2(22, 22)
 	row.add_child(check)
-	var l := GardenWidgets.bold_label(GardenApi.upper_tr(word), 18, GardenTheme.MINT_DEEP.darkened(0.25), HORIZONTAL_ALIGNMENT_LEFT, true)
+	var l := GardenWidgets.bold_label(GardenApi.upper(word), 20, GardenTheme.MINT_DEEP.darkened(0.25), HORIZONTAL_ALIGNMENT_LEFT, true)
+	l.name = "SolvedWord"
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(l)
 	if party_style:
@@ -246,7 +252,7 @@ func _card_head(index: int) -> Control:
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(spacer)
 	if not hint_text.is_empty():
-		var hint_chip := GardenWidgets.chip(GardenLoc.t("hint_prefix", GardenApi.lang()), GardenTheme.YELLOW_SOFT, Color("6a4d10"))
+		var hint_chip := GardenWidgets.chip(GardenLoc.t("hint_prefix", GardenApi.lang()), GardenTheme.YELLOW_SOFT, GardenTheme.LAVENDER_DEEP)
 		head.add_child(hint_chip)
 	return head
 
@@ -257,10 +263,10 @@ func _hint_bubble() -> Control:
 	var bubble := GardenWidgets.panel(GardenTheme.YELLOW_SOFT, 14, false, 11)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 7)
-	var bulb := GardenWidgets.bold_label("✿", 16, GardenTheme.YELLOW_DEEP.darkened(0.2))
-	bulb.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	var bulb := GardenPaint.icon(7, 22)
+	# Static atlas icon.
 	h.add_child(bulb)
-	var hint_l := GardenWidgets.label(hint_text, 14, Color("5a4617"), HORIZONTAL_ALIGNMENT_LEFT, true)
+	var hint_l := GardenWidgets.label(hint_text, 14, GardenTheme.LAVENDER_DEEP, HORIZONTAL_ALIGNMENT_LEFT, true)
 	hint_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(hint_l)
 	bubble.add_child(h)
@@ -297,7 +303,7 @@ func _cell_style(filled: bool, locked: bool, cursor: bool) -> Dictionary:
 	var border_w := 1
 	if locked:
 		bg = GardenTheme.YELLOW_SOFT
-		fg = Color("6a4d10")
+		fg = GardenTheme.LAVENDER_DEEP
 		border = GardenTheme.YELLOW
 	elif filled:
 		bg = GardenTheme.LAVENDER_SOFT
@@ -366,19 +372,35 @@ func _fill_prefix_boxes(word: String) -> void:
 func _fill_session_boxes(index: int) -> void:
 	if _input_row == null or session == null:
 		return
-	GardenWidgets.clear_children(_input_row)
 	var count := int(session.word_length(index))
 	if count <= 0:
 		return
 	var metrics := _box_metrics(count)
-	var cursor_letter := int(session.get_state().get("current_letter_index", 0))
+	var cursor_letter := int(session.current_letter_index())
 	for i in count:
 		var locked := bool(session.is_locked(index, i))
 		var letter := str(session.letter_at(index, i))
 		var filled := not letter.is_empty()
 		var is_cursor := i == cursor_letter and not filled
 		var shown := letter if filled else ""
-		_add_cell(shown, metrics["width"], metrics["height"], metrics["font"], locked, filled and not locked, is_cursor)
+		if i < _input_row.get_child_count():
+			var cell := _input_row.get_child(i) as PanelContainer
+			var text_label := cell.get_child(0) as Label
+			text_label.text = shown
+			var state_key := str(locked) + str(filled) + str(is_cursor)
+			if str(cell.get_meta("state", "")) != state_key:
+				var colors := _cell_style(filled and not locked, locked, is_cursor)
+				var sb := GardenTheme.panel_style(colors.bg, 9, false, colors.border, colors.border_w)
+				sb.content_margin_left = 1
+				sb.content_margin_right = 1
+				sb.content_margin_top = 1
+				sb.content_margin_bottom = 1
+				cell.add_theme_stylebox_override("panel", sb)
+				text_label.add_theme_color_override("font_color", colors.fg)
+				cell.set_meta("state", state_key)
+		else:
+			_add_cell(shown, metrics["width"], metrics["height"], metrics["font"], locked, filled and not locked, is_cursor)
+
 
 
 func _refresh_boxes() -> void:
@@ -402,3 +424,21 @@ func _ignore_children(node: Node) -> void:
 		if child is Control:
 			(child as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_ignore_children(child)
+
+
+func morph_word(index: int, answer: String, root: String) -> void:
+	if index < 0 or index >= get_child_count():
+		return
+	var label_node := get_child(index).find_child("SolvedWord", true, false) as Label
+	if label_node == null:
+		return
+	label_node.text = GardenApi.upper(answer)
+	if GardenApi.reduced_motion() or GardenApi.upper(answer) == GardenApi.upper(root):
+		label_node.text = GardenApi.upper(root)
+		return
+	var tween := label_node.create_tween()
+	tween.tween_interval(0.26)
+	tween.tween_property(label_node, "modulate:a", 0.0, 0.13).set_trans(Tween.TRANS_SINE)
+	tween.tween_callback(func() -> void: label_node.text = GardenApi.upper(root))
+	tween.tween_property(label_node, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_SINE)
+	await tween.finished

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="application-version" content="0.2.0">
+<meta name="theme-color" content="#7541dc">
+<meta name="description" content="Anlamlı tamlamalar kur, kelimeleri bağla. Kelime Zinciri: Türkçe ve İngilizce kelime oyunu.">
+<title>Kelime Zinciri</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f6fc;color:#24163b;font-family:system-ui,sans-serif}#canvas{display:block;width:100%;height:100%;outline:none}#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f7f6fc;padding:28px;text-align:center}#loading svg{width:92px;height:92px}h1{font-size:32px;margin:22px 0 8px;letter-spacing:-1px}.tag{font-size:11px;color:#81778f;letter-spacing:2px}progress{appearance:none;border:0;border-radius:8px;height:5px;width:min(280px,80vw);margin-top:42px;background:#eae5f1}progress::-webkit-progress-bar{background:#eae5f1;border-radius:8px}progress::-webkit-progress-value{background:#7541dc;border-radius:8px}progress::-moz-progress-bar{background:#7541dc;border-radius:8px}#status{font-size:13px;color:#81778f;margin-top:14px;max-width:340px;line-height:1.6}#retry{margin-top:18px;background:#7541dc;color:white;border:0;padding:14px 24px;border-radius:14px;font:inherit;cursor:pointer}noscript{position:fixed;inset:0;background:#f7f6fc;padding:35vh 24px;text-align:center;z-index:10}
+</style>
+$GODOT_HEAD_INCLUDE
+</head>
+<body>
+<canvas id="canvas" tabindex="0" aria-label="Kelime Zinciri oyunu"></canvas>
+<noscript>Oyunu açmak için tarayıcında JavaScript'i etkinleştir.</noscript>
+<div id="loading" role="status" aria-live="polite">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" aria-hidden="true"><rect x="8" y="8" width="176" height="176" rx="48" fill="#7541dc"/><g fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"><rect x="38" y="66" width="78" height="48" rx="24" transform="rotate(-40 77 90)"/><rect x="76" y="78" width="78" height="48" rx="24" transform="rotate(-40 115 102)"/><path d="m79 110 34-29"/></g></svg>
+<h1>Kelime Zinciri</h1><div class="tag">HER KELİME BİR BAĞLANTI</div>
+<progress id="progress" max="100" aria-label="Oyun yükleniyor"></progress>
+<div id="status">Kelimeler hazırlanıyor…</div><button id="retry" hidden>Yeniden dene</button>
+</div>
+<script src="$GODOT_URL"></script>
+<script>
+// The browser owns text composition; Godot receives complete Unicode strings.
+window.KelimeInput = {
+ fields: new Map(),
+ create(id,onInput,onSubmit,value,placeholder,maxLength){
+  this.remove(id);
+  const input=document.createElement('input');
+  input.type='text';input.value=value;input.placeholder=placeholder;
+  input.maxLength=maxLength||32;input.autocomplete='off';input.spellcheck=false;
+  input.autocapitalize='none';input.enterKeyHint='send';input.setAttribute('aria-label',placeholder);
+  input.style.cssText='position:fixed;z-index:5;display:none;min-width:0;border:2px solid transparent;border-radius:16px;background:#fff;color:#24163b;padding:8px 14px;outline:none;font-family:system-ui,sans-serif;box-sizing:border-box;';
+  input.addEventListener('focus',()=>input.style.borderColor='#7541dc');
+  input.addEventListener('blur',()=>input.style.borderColor='transparent');
+  input.addEventListener('input',()=>{if(!input.composing)onInput(input.value);});
+  input.addEventListener('compositionstart',()=>input.composing=true);
+  input.addEventListener('compositionend',()=>{input.composing=false;onInput(input.value);});
+  input.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing){e.preventDefault();onSubmit();}});
+  document.body.appendChild(input);this.fields.set(id,input);
+ },
+ place(id,x,y,w,h,vw,vh){const input=this.fields.get(id);if(!input)return;
+  const r=document.getElementById('canvas').getBoundingClientRect();
+  Object.assign(input.style,{display:'block',left:(r.left+x/vw*r.width)+'px',top:(r.top+y/vh*r.height)+'px',width:(w/vw*r.width)+'px',height:(h/vh*r.height)+'px',fontSize:Math.max(16,17*r.width/vw)+'px'});
+ },
+ value(id,value){const input=this.fields.get(id);if(input&&input.value!==value)input.value=value;},
+ hide(id){const input=this.fields.get(id);if(input)input.style.display='none';},
+ remove(id){const input=this.fields.get(id);if(input){input.remove();this.fields.delete(id);}}
+};
+const engine = new Engine($GODOT_CONFIG);
+const progress = document.getElementById('progress');
+const statusText = document.getElementById('status');
+const retry = document.getElementById('retry');
+retry.addEventListener('click',()=>location.reload());
+const missing = Engine.getMissingFeatures({threads:$GODOT_THREADS_ENABLED});
+function fail(error){console.error(error);statusText.textContent='Oyun yüklenemedi. Bağlantını kontrol edip yeniden dene.';retry.hidden=false;}
+if(missing.length){statusText.textContent='Bu tarayıcı WebGL 2 veya WebAssembly desteğini sağlayamıyor. Güncel bir tarayıcıyla yeniden aç.';retry.hidden=false;}
+else engine.startGame({onProgress(current,total){if(total>0){progress.value=current/total*100;statusText.textContent='Oyun yükleniyor · %'+Math.round(progress.value);}else{progress.removeAttribute('value');statusText.textContent='Oyun hazırlanıyor…';}}}).then(()=>document.getElementById('loading').remove()).catch(fail);
+// Keep the canvas above the phone keyboard. visualViewport handles browsers
+// which overlay the keyboard instead of resizing the layout viewport.
+if(window.visualViewport){visualViewport.addEventListener('resize',()=>{document.getElementById('canvas').style.height=visualViewport.height+'px';});}
+</script>
+</body></html>

@@ -1,3 +1,30 @@
+# 0.2 güncel doğrulama — 28 Ekim 2026
+
+Godot 4.5.2, Windows, Compatibility renderer. Aşağıdaki eski sürüm kanıtları tarihçe olarak korunur.
+
+| Kontrol | Sonuç |
+|---|---|
+| Başsız proje importu | Geçti |
+| Eski çekirdek regresyonları | 689 kontrol geçti |
+| TR/EN içerik doğrulaması | 1.255 kontrol geçti |
+| Bütün 36 zincirde doğal cevaplar | 936 kontrol geçti; ekli cevap, kökün reddi, eksik/uzun/yanlış giriş, Türkçe küçük harf, maske uzunluğu |
+| Güncel UI, başsız | 695 kontrol geçti |
+| Güncel UI, gerçek OpenGL penceresi ve PNG kaydı | 711 kontrol geçti; hata ve kaynak sızıntısı yok |
+| Backend regresyonları | 39 test geçti |
+| `run_tests.ps1 -IncludeUI -Strict` | 5 paket, 0 hata, 0 atlama |
+| Web export | Geçti; özel markalı HTML kabuğu ve tek iş parçacıklı motor |
+| Gerçek tarayıcı | Profil, menü, gerçek HTML input, Türkçe BARDAĞI → BARDAK ve ALTLIĞI → ALTLIK, öğretici akışı doğrulandı |
+
+UI kapsamı: ilk açılış profili; boş ad denetimi; dil değişirken taslak adın korunması; her dil için uygulamalı öğretici; öğreticinin gerçek altın ve ilerlemeyi değiştirmemesi; oyun içi klavyenin yokluğu; cihaz klavyesi etkinliği; doğru maske; yanlış/eksik cevap; köke dönüşürken giriş kilidi; yazarken mevcut kartların korunması; tekrar ödülünün engellenmesi; ipucu/harf maliyetleri; az hareket modu; profil düzenleme; lisanslar; Online ekranının bağlantı açmaması; 480/360/320 genişlikte taşma; 360×450 kısa ekranda cevabın görünürlüğü.
+
+Web denemesinde Godot'un deneysel contenteditable yolunda Türkçe giriş kaybı görüldü. Üründeki web alanları gerçek HTML input'a bağlandı; son Unicode metni oyun çekirdeğine aktarılıyor. Deneysel klavye export seçeneği kapalıdır.
+
+Güncel ekranlar: [ana menü](screenshots/home.png), [profil](screenshots/profile.png), [öğretici](screenshots/tutorial.png), [oyun](screenshots/play.png), [klavye yüksekliği](screenshots/keyboard_height.png), [sonuç](screenshots/play_win.png).
+
+**Sınırlar:** Gerçek Android/iPhone sistem klavyesi ve IME, fiziksel cihazda çentik ve güvenli alan, pil/CPU/GPU ölçümleri henüz yapılmadı. 360×450 masaüstü testi fiziksel klavye testi yerine geçmez. Eski online UI testleri bu sürümde çalıştırılmadı; Online ürün girişinden kapalıdır. Backend testleri gelecekteki işlevi korumak için çalıştırıldı.
+
+---
+
 # Test sonuçları ve kabul planı
 
 **Tarih:** 2026-10-28 · **Ortam:** Windows, Godot 4.5.2 standard, Node.js 24.12.0 / npm 11.6.2.

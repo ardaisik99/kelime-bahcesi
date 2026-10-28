@@ -5,10 +5,14 @@ config_version=5
 
 [application]
 
-config/name="Kelime Bahçesi"
-config/version="0.1.0"
+config/name="Kelime Zinciri"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Godot/app_userdata/Kelime Bahçesi"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.969, 0.965, 0.988, 1)
+config/version="0.2.0"
 config/description="Bilingual Turkish/English word-chain puzzle game."
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/boot.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -39,5 +43,5 @@ pointing/emulate_mouse_from_touch=true
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.965, 0.941, 1, 1)
+environment/defaults/default_clear_color=Color(0.969, 0.965, 0.988, 1)
 textures/vram_compression/import_etc2_astc=true

@@ -2,81 +2,151 @@
 	"language": "tr",
 	"version": 1,
 	"categories": [
-		{ "id": "kitchen", "name_key": "category.kitchen" },
-		{ "id": "nature", "name_key": "category.nature" },
-		{ "id": "daily", "name_key": "category.daily" }
+		{
+			"id": "kitchen",
+			"name_key": "category.kitchen"
+		},
+		{
+			"id": "nature",
+			"name_key": "category.nature"
+		},
+		{
+			"id": "daily",
+			"name_key": "category.daily"
+		}
 	],
 	"levels": [
 		{
 			"id": "tr_kitchen_tea_time",
 			"category": "kitchen",
 			"title": "Çay keyfi",
-			"words": ["ÇAY", "KAŞIK", "OYUN", "HAVA"],
+			"words": [
+				"ÇAY",
+				"KAŞIK",
+				"OYUN",
+				"HAVA"
+			],
 			"hints": [
 				"Demlikte demlenen sıcak içecek",
 				"Çorbayı karıştırmaya yarayan mutfak aracı",
 				"Kurallarla oynanan eğlence",
 				"Oyun oynarken çalınan ezgi; atmosfer anlamı da vardır"
 			],
-			"links": ["çay kaşığı", "kaşık oyunu", "oyun havası"]
+			"links": [
+				"çay kaşığı",
+				"kaşık oyunu",
+				"oyun havası"
+			],
+			"sequence": 11,
+			"difficulty": 2
 		},
 		{
 			"id": "tr_kitchen_lemon_water",
 			"category": "kitchen",
 			"title": "Limonata hazırlığı",
-			"words": ["LİMON", "SU", "BARDAK", "ALTLIK"],
+			"words": [
+				"LİMON",
+				"SU",
+				"BARDAK",
+				"ALTLIK"
+			],
 			"hints": [
 				"Ekşi, sarı kabuklu meyve",
 				"İçeceklerin temel maddesi olan renksiz sıvı",
 				"İçecek konulan kap",
 				"Bardağın altına konan küçük koruyucu parça"
 			],
-			"links": ["limon suyu", "su bardağı", "bardak altlığı"]
+			"links": [
+				"limon suyu",
+				"su bardağı",
+				"bardak altlığı"
+			],
+			"sequence": 1,
+			"difficulty": 1
 		},
 		{
 			"id": "tr_kitchen_fish_bread",
 			"category": "kitchen",
 			"title": "Fırın hazırlığı",
-			"words": ["BUĞDAY", "EKMEK", "FIRIN", "KÜREK"],
+			"words": [
+				"BUĞDAY",
+				"EKMEK",
+				"FIRIN",
+				"KÜREK"
+			],
 			"hints": [
 				"Un yapımında kullanılan tahıl tanesi",
 				"Un, su ve mayayla yapılan temel gıda",
 				"Ekmek pişirilen ocak",
 				"Fırından tepsi çekmeye yarayan uzun saplı araç"
 			],
-			"links": ["buğday ekmeği", "ekmek fırını", "fırın küreği"]
+			"links": [
+				"buğday ekmeği",
+				"ekmek fırını",
+				"fırın küreği"
+			],
+			"sequence": 10,
+			"difficulty": 2
 		},
 		{
 			"id": "tr_kitchen_flower_honey",
 			"category": "kitchen",
 			"title": "Kahvaltı sofrası",
-			"words": ["ÇİÇEK", "BAL", "KAVANOZ", "KAPAK"],
+			"words": [
+				"ÇİÇEK",
+				"BAL",
+				"KAVANOZ",
+				"KAPAK"
+			],
 			"hints": [
 				"Bitkilerin renkli üreme organı",
 				"Arıların çiçeklerden topladığı tatlı madde",
 				"Kapağı olan cam saklama kabı",
 				"Kabın ağzını örten parça"
 			],
-			"links": ["çiçek balı", "bal kavanozu", "kavanoz kapağı"]
+			"links": [
+				"çiçek balı",
+				"bal kavanozu",
+				"kavanoz kapağı"
+			],
+			"sequence": 6,
+			"difficulty": 1
 		},
 		{
 			"id": "tr_kitchen_dinner_table",
 			"category": "kitchen",
 			"title": "Akşam yemeği",
-			"words": ["YEMEK", "MASA", "LAMBA", "IŞIK"],
+			"words": [
+				"YEMEK",
+				"MASA",
+				"LAMBA",
+				"IŞIK"
+			],
 			"hints": [
 				"Günün öğününde yenilen yiyecek",
 				"Üzerine eşya konan ayaklı düz mobilya",
 				"Elektrikle aydınlatan araç",
 				"Gözle görülen aydınlık"
 			],
-			"links": ["yemek masası", "masa lambası", "lamba ışığı"]
+			"links": [
+				"yemek masası",
+				"masa lambası",
+				"lamba ışığı"
+			],
+			"sequence": 3,
+			"difficulty": 1
 		},
 		{
 			"id": "tr_kitchen_tea_house",
 			"category": "kitchen",
 			"title": "Takvim yaprağı",
-			"words": ["ÇAY", "OCAK", "AY", "TAKVİM", "YAPRAK"],
+			"words": [
+				"ÇAY",
+				"OCAK",
+				"AY",
+				"TAKVİM",
+				"YAPRAK"
+			],
 			"hints": [
 				"Sabah kahvaltısında içilen sıcak içecek",
 				"Yemek pişirilen yer; yılın ilk ayı",
@@ -84,13 +154,26 @@
 				"Günleri ve ayları gösteren çizelge",
 				"Ağacın yeşil organı"
 			],
-			"links": ["çay ocağı", "ocak ayı", "ay takvimi", "takvim yaprağı"]
+			"links": [
+				"çay ocağı",
+				"ocak ayı",
+				"ay takvimi",
+				"takvim yaprağı"
+			],
+			"sequence": 17,
+			"difficulty": 3
 		},
 		{
 			"id": "tr_nature_rain_drop",
 			"category": "nature",
 			"title": "Yağmur sonrası",
-			"words": ["YAĞMUR", "DAMLA", "SAKIZ", "AĞAÇ", "KABUK"],
+			"words": [
+				"YAĞMUR",
+				"DAMLA",
+				"SAKIZ",
+				"AĞAÇ",
+				"KABUK"
+			],
 			"hints": [
 				"Buluttan yere düşen su",
 				"Düşen küçük su parçası",
@@ -98,13 +181,26 @@
 				"Gövdesi odunlu, dallı uzun bitki",
 				"Meyvenin veya ağacın dış örtüsü"
 			],
-			"links": ["yağmur damlası", "damla sakızı", "sakız ağacı", "ağaç kabuğu"]
+			"links": [
+				"yağmur damlası",
+				"damla sakızı",
+				"sakız ağacı",
+				"ağaç kabuğu"
+			],
+			"sequence": 16,
+			"difficulty": 3
 		},
 		{
 			"id": "tr_nature_bee_hive",
 			"category": "nature",
 			"title": "Arıların dünyası",
-			"words": ["BAL", "ARI", "KOVAN", "GİRİŞ", "KAPI"],
+			"words": [
+				"BAL",
+				"ARI",
+				"KOVAN",
+				"GİRİŞ",
+				"KAPI"
+			],
 			"hints": [
 				"Arıların yaptığı tatlı besin",
 				"Çiçeklerden nektar toplayan uçan böcek",
@@ -112,13 +208,26 @@
 				"Bir yere girilen yer",
 				"Girişi kapatan kanat"
 			],
-			"links": ["bal arısı", "arı kovanı", "kovan girişi", "giriş kapısı"]
+			"links": [
+				"bal arısı",
+				"arı kovanı",
+				"kovan girişi",
+				"giriş kapısı"
+			],
+			"sequence": 12,
+			"difficulty": 2
 		},
 		{
 			"id": "tr_nature_sea_star",
 			"category": "nature",
 			"title": "Deniz bahçesi",
-			"words": ["DENİZ", "YILDIZ", "ÇİÇEK", "BAHÇE", "KAPI"],
+			"words": [
+				"DENİZ",
+				"YILDIZ",
+				"ÇİÇEK",
+				"BAHÇE",
+				"KAPI"
+			],
 			"hints": [
 				"Tuzlu büyük su kütlesi",
 				"Gökyüzünde parlayan gök cismi",
@@ -126,52 +235,98 @@
 				"Çiçek ve sebze yetiştirilen yer",
 				"Bahçeye açılan geçit"
 			],
-			"links": ["deniz yıldızı", "yıldız çiçeği", "çiçek bahçesi", "bahçe kapısı"]
+			"links": [
+				"deniz yıldızı",
+				"yıldız çiçeği",
+				"çiçek bahçesi",
+				"bahçe kapısı"
+			],
+			"sequence": 14,
+			"difficulty": 3
 		},
 		{
 			"id": "tr_nature_forest_fire",
 			"category": "nature",
 			"title": "Yangın gözetleme",
-			"words": ["ORMAN", "YANGIN", "KULE", "SAAT"],
+			"words": [
+				"ORMAN",
+				"YANGIN",
+				"KULE",
+				"SAAT"
+			],
 			"hints": [
 				"Ağaçlarla kaplı geniş arazi",
 				"Zarar veren büyük ateş",
 				"Yüksekten bakmaya yarayan yapı",
 				"Zamanı gösteren araç"
 			],
-			"links": ["orman yangını", "yangın kulesi", "kule saati"]
+			"links": [
+				"orman yangını",
+				"yangın kulesi",
+				"kule saati"
+			],
+			"sequence": 8,
+			"difficulty": 2
 		},
 		{
 			"id": "tr_nature_sea_lantern",
 			"category": "nature",
 			"title": "Kıyıda ışık",
-			"words": ["DENİZ", "FENER", "BALIK", "AĞ"],
+			"words": [
+				"DENİZ",
+				"FENER",
+				"BALIK",
+				"AĞ"
+			],
 			"hints": [
 				"Dalgalı tuzlu su",
 				"Işık veren araç",
 				"Suda yaşayan hayvan",
 				"Balık tutmaya yarayan örgü"
 			],
-			"links": ["deniz feneri", "fener balığı", "balık ağı"]
+			"links": [
+				"deniz feneri",
+				"fener balığı",
+				"balık ağı"
+			],
+			"sequence": 5,
+			"difficulty": 1
 		},
 		{
 			"id": "tr_nature_river_bed",
 			"category": "nature",
 			"title": "Nehir kıyısında",
-			"words": ["NEHİR", "YATAK", "ODA", "MÜZİK"],
+			"words": [
+				"NEHİR",
+				"YATAK",
+				"ODA",
+				"MÜZİK"
+			],
 			"hints": [
 				"Denize dökülen büyük akarsu",
 				"Uyumak için kullanılan eşya",
 				"Evin bölümlerinden biri",
 				"Seslerle oluşturulan sanat"
 			],
-			"links": ["nehir yatağı", "yatak odası", "oda müziği"]
+			"links": [
+				"nehir yatağı",
+				"yatak odası",
+				"oda müziği"
+			],
+			"sequence": 9,
+			"difficulty": 2
 		},
 		{
 			"id": "tr_daily_book_cover",
 			"category": "daily",
 			"title": "Defter sayfası",
-			"words": ["KİTAP", "KAPAK", "RESİM", "DEFTER", "YAPRAK"],
+			"words": [
+				"KİTAP",
+				"KAPAK",
+				"RESİM",
+				"DEFTER",
+				"YAPRAK"
+			],
 			"hints": [
 				"Okunacak sayfaları bir araya getiren yayın",
 				"Kitabın ön yüzünü koruyan parça",
@@ -179,52 +334,98 @@
 				"Yazı yazılan sayfalı nesne",
 				"Defterdeki tek sayfa"
 			],
-			"links": ["kitap kapağı", "kapak resmi", "resim defteri", "defter yaprağı"]
+			"links": [
+				"kitap kapağı",
+				"kapak resmi",
+				"resim defteri",
+				"defter yaprağı"
+			],
+			"sequence": 13,
+			"difficulty": 3
 		},
 		{
 			"id": "tr_daily_coffee_machine",
 			"category": "daily",
 			"title": "Mühendislik sabahı",
-			"words": ["KAHVE", "MAKİNE", "MÜHENDİSLİK", "FAKÜLTE"],
+			"words": [
+				"KAHVE",
+				"MAKİNE",
+				"MÜHENDİSLİK",
+				"FAKÜLTE"
+			],
 			"hints": [
 				"Kavrulmuş çekirdekten yapılan içecek",
 				"İşi kolaylaştıran düzenek",
 				"Teknik tasarım mesleği",
 				"Üniversitenin bölümü"
 			],
-			"links": ["kahve makinesi", "makine mühendisliği", "mühendislik fakültesi"]
+			"links": [
+				"kahve makinesi",
+				"makine mühendisliği",
+				"mühendislik fakültesi"
+			],
+			"sequence": 18,
+			"difficulty": 3
 		},
 		{
 			"id": "tr_daily_bus_ticket",
 			"category": "daily",
 			"title": "Şehir içi yolculuk",
-			"words": ["OTOBÜS", "BİLET", "GİŞE", "MEMUR"],
+			"words": [
+				"OTOBÜS",
+				"BİLET",
+				"GİŞE",
+				"MEMUR"
+			],
 			"hints": [
 				"Yolcu taşıyan büyük kara aracı",
 				"Ulaşım için alınan kâğıt",
 				"Bilet satılan küçük büro",
 				"Devlet dairesinde çalışan görevli"
 			],
-			"links": ["otobüs bileti", "bilet gişesi", "gişe memuru"]
+			"links": [
+				"otobüs bileti",
+				"bilet gişesi",
+				"gişe memuru"
+			],
+			"sequence": 7,
+			"difficulty": 2
 		},
 		{
 			"id": "tr_daily_phone_screen",
 			"category": "daily",
 			"title": "Telefon tamiri",
-			"words": ["CEP", "TELEFON", "EKRAN", "KORUYUCU"],
+			"words": [
+				"CEP",
+				"TELEFON",
+				"EKRAN",
+				"KORUYUCU"
+			],
 			"hints": [
 				"Pantolonun yanındaki küçük göz",
 				"Sesli iletişim aracı",
 				"Görüntüyü gösteren yüzey",
 				"Bir şeyi zarardan saklayan"
 			],
-			"links": ["cep telefonu", "telefon ekranı", "ekran koruyucusu"]
+			"links": [
+				"cep telefonu",
+				"telefon ekranı",
+				"ekran koruyucusu"
+			],
+			"sequence": 4,
+			"difficulty": 1
 		},
 		{
 			"id": "tr_daily_cinema_garden",
 			"category": "daily",
 			"title": "Sinemadan bahçeye",
-			"words": ["SİNEMA", "SALON", "BİTKİ", "ÇAY", "BAHÇE"],
+			"words": [
+				"SİNEMA",
+				"SALON",
+				"BİTKİ",
+				"ÇAY",
+				"BAHÇE"
+			],
 			"hints": [
 				"Film gösterilen yer",
 				"Geniş kapalı yer",
@@ -232,20 +433,38 @@
 				"Demlenerek içilen sıcak içecek",
 				"Ağaç ve çiçek yetiştirilen alan"
 			],
-			"links": ["sinema salonu", "salon bitkisi", "bitki çayı", "çay bahçesi"]
+			"links": [
+				"sinema salonu",
+				"salon bitkisi",
+				"bitki çayı",
+				"çay bahçesi"
+			],
+			"sequence": 15,
+			"difficulty": 3
 		},
 		{
 			"id": "tr_daily_wall_clock",
 			"category": "daily",
 			"title": "Kule saati",
-			"words": ["DUVAR", "SAAT", "KULE", "KAPI"],
+			"words": [
+				"DUVAR",
+				"SAAT",
+				"KULE",
+				"KAPI"
+			],
 			"hints": [
 				"Odayı bölen dikey yapı",
 				"Zamanı ölçen araç",
 				"Yüksek yapı",
 				"Bir yere girilen açıklık"
 			],
-			"links": ["duvar saati", "saat kulesi", "kule kapısı"]
+			"links": [
+				"duvar saati",
+				"saat kulesi",
+				"kule kapısı"
+			],
+			"sequence": 2,
+			"difficulty": 1
 		}
 	]
 }

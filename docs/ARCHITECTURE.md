@@ -1,3 +1,7 @@
+# 0.2 güncellemesi
+
+Güncel ürün adı Kelime Zinciri. Eski ajan görev sahipliği kuralları geçersizdir. Güncel cevap/klavye/profil/tasarım sözleşmeleri [REDESIGN.md](REDESIGN.md) belgesindedir; aşağıdaki belge önceki çekirdek API ve kayıt mimarisinin korunan temelini açıklar. Online ürün girişinde kapalıdır.
+
 # WordGarden — Core Architecture
 
 Bilingual (Turkish/English) word-chain puzzle for mobile portrait (480×900).
@@ -6,11 +10,6 @@ docs use **WordGarden** for the project.
 
 This document describes the **core layer** (`core/`, `data/`, `tests/`) and the
 exact contracts the UI, scene and backend agents can rely on.
-
-Ownership: core files are `project.godot`, `.gitignore`, `icon.svg`,
-`core/**`, `data/**`, `docs/ARCHITECTURE.md`, `docs/PLAN.md`,
-`tests/test_core.gd`, `tests/test_content.gd`. UI (`ui/**`, `scenes/**`),
-backend (`backend/**`) and the other `docs/*` files belong to other agents.
 
 ---
 

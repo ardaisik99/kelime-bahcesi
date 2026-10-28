@@ -1,3 +1,18 @@
+# 0.2 — Kelime Zinciri
+
+- [x] Mor/beyaz mobil tasarım ve küçük statik SVG atlası
+- [x] Yerel profil ve dil seçimi; sonradan düzenleme
+- [x] Ekli Türkçe cevap → animasyonla kök dönüşümü
+- [x] Uygulamalı ve dil bazında kaydedilen öğretici
+- [x] Telefon/tarayıcı klavyesi; oyun içi klavyenin solo akıştan kaldırılması
+- [x] Kolay/orta/zor bölüm sırası; eski kimlik ve kayıtların korunması
+- [x] Markalı web yükleme ekranı ve oyun içi intro
+- [x] Online girişinin bağlantı açmayan Yakında ekranına alınması
+- [ ] Fiziksel Android/iOS cihazda klavye, güvenli alan ve performans kontrolü
+- [ ] İleride online modun yeni cevap sözleşmesine uyarlanması
+
+Aşağıdaki önceki plan ve test geçmişi referans olarak korunur. Güncel kararlar [REDESIGN.md](REDESIGN.md).
+
 # Kelime Bahçesi — Geliştirme planı ve teslim durumu
 
 Godot 4.5.2 · Android/iOS hedefli · TR/EN · Son inceleme: 2026-10-28

@@ -368,7 +368,7 @@ func _set_connection_ui() -> void:
 	if _status_label == null:
 		return
 	var bg := GardenTheme.YELLOW_SOFT
-	var fg := Color("6a4d10")
+	var fg := GardenTheme.LAVENDER_DEEP
 	var text := GardenLoc.t("online_connecting", _lang)
 	if _connected:
 		bg = GardenTheme.MINT
@@ -497,7 +497,7 @@ func _build_room() -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	card.add_child(v)
-	v.add_child(GardenWidgets.chip(GardenLoc.t("online_room", _lang).to_upper(), GardenTheme.YELLOW_SOFT, Color("6a4d10")))
+	v.add_child(GardenWidgets.chip(GardenLoc.t("online_room", _lang).to_upper(), GardenTheme.YELLOW_SOFT, GardenTheme.LAVENDER_DEEP))
 	v.add_child(GardenWidgets.caption(GardenLoc.t("online_room_code", _lang), GardenTheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER))
 	var code := GardenWidgets.title(_display_code(), 38, GardenTheme.LAVENDER_DEEP, HORIZONTAL_ALIGNMENT_CENTER)
 	v.add_child(code)
@@ -510,7 +510,7 @@ func _build_room() -> void:
 		var p: Dictionary = p_v
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 8)
-		var dot := GardenWidgets.bold_label("✿", 15, GardenTheme.PINK_DEEP)
+		var dot := GardenWidgets.bold_label("+", 15, GardenTheme.PINK_DEEP)
 		row.add_child(dot)
 		var pname := str(p.get("name", GardenLoc.t("online_opponent", _lang)))
 		var name_label := GardenWidgets.bold_label(pname if not pname.is_empty() else GardenLoc.t("online_opponent", _lang), 15, GardenTheme.INK)
@@ -1224,7 +1224,7 @@ func _show_finish(reason: String) -> void:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 9)
 	card.add_child(v)
-	var flower := GardenPaint.FlowerMark.new()
+	var flower := GardenPaint.ChainIcon.new()
 	flower.custom_minimum_size = Vector2(74, 78)
 	flower.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	v.add_child(flower)

@@ -9,6 +9,7 @@ const UI_PREFS_PATH := "user://garden_ui.json"
 
 static var _prefs: Dictionary = {}
 static var _prefs_loaded := false
+static var _level_cache: Dictionary = {}
 
 
 # ---------------------------------------------------------------------------
@@ -408,6 +409,9 @@ static func _category_color(id: String, index: int) -> String:
 
 
 static func levels(language: String, category_id: String = "") -> Array:
+	var cache_key := language + ":" + category_id
+	if _level_cache.has(cache_key):
+		return _level_cache[cache_key]
 	var node := content()
 	var raw: Variant = null
 	if node != null and node.has_method("get_levels"):
@@ -438,6 +442,9 @@ static func levels(language: String, category_id: String = "") -> Array:
 				filtered.append(lv)
 		if not filtered.is_empty():
 			out = filtered
+	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.get("sequence", 0)) < int(b.get("sequence", 0)))
+	if not out.is_empty():
+		_level_cache[cache_key] = out
 	return out
 
 
@@ -466,6 +473,7 @@ static func all_levels(language: String) -> Array:
 	for category in categories(language):
 		for lv in levels(language, str(category.get("id", ""))):
 			out.append(lv)
+	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.get("sequence", 0)) < int(b.get("sequence", 0)))
 	return out
 
 
@@ -544,6 +552,7 @@ static func normalize_level(raw: Variant, language: String) -> Dictionary:
 	var words_src: Variant = d.get("words", d.get("chain", d.get("items", [])))
 	var hints_src: Variant = d.get("hints", d.get("clues", []))
 	var links_src: Variant = d.get("links", d.get("expressions", d.get("examples", [])))
+	d["inflected_answers"] = language == "tr"
 	var words: Array = []
 	if words_src is Array:
 		for i in (words_src as Array).size():
@@ -575,6 +584,8 @@ static func normalize_level(raw: Variant, language: String) -> Dictionary:
 		"title": title,
 		"words": words,
 		"raw": d,
+		"difficulty": int(d.get("difficulty", 1)),
+		"sequence": int(d.get("sequence", 0)),
 		"word_count": words.size()
 	}
 

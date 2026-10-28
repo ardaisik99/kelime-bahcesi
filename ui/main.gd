@@ -1,10 +1,10 @@
 extends Control
 
-## Application shell: procedural pastel background, safe-area layout, fixed top
-## bar, screen routing, toasts, confirm dialogs and the confetti canvas.
+## Application shell: static background, safe-area layout, routing and dialogs.
 ## Screen content lives in ui/screens/*.gd and is intentionally decoupled from
 ## the core autoloads through GardenApi.
 
+const ProfileScreenScript = preload("res://ui/screens/profile.gd")
 const HomeScreenScript = preload("res://ui/screens/home.gd")
 const CategoryScreenScript = preload("res://ui/screens/category.gd")
 const PlayScreenScript = preload("res://ui/screens/play.gd")
@@ -26,7 +26,7 @@ var _modal_layer: Control
 var _toast: PanelContainer
 var _toast_label: Label
 var _toast_serial := 0
-var _confetti: GardenPaint.Confetti
+var _native_keyboard_inset := 0
 var _route: Dictionary = {"name": "home", "params": {}}
 var _history: Array = []
 
@@ -38,8 +38,21 @@ func _ready() -> void:
 	_build()
 	get_viewport().size_changed.connect(_update_safe_area)
 	_update_safe_area()
-	goto_home()
+	if GardenApi.player_name().is_empty():
+		replace_screen("profile", {"first_run": true})
+	else:
+		goto_home()
 	_update_topbar_texts()
+	if OS.has_feature("mobile") and not OS.has_feature("web"):
+		var keyboard_watch := Timer.new()
+		keyboard_watch.wait_time = 0.15
+		keyboard_watch.autostart = true
+		keyboard_watch.timeout.connect(func() -> void:
+			var height := DisplayServer.virtual_keyboard_get_height()
+			if height != _native_keyboard_inset:
+				_native_keyboard_inset = height
+				_update_safe_area())
+		add_child(keyboard_watch)
 
 
 func _build() -> void:
@@ -68,7 +81,9 @@ func _build() -> void:
 	_topbar.add_child(bar)
 
 	_back_button = Button.new()
-	_back_button.text = "←"
+	_back_button.icon = GardenPaint.texture(10)
+	_back_button.expand_icon = true
+	_back_button.add_theme_constant_override("icon_max_width", 20)
 	_back_button.tooltip_text = GardenLoc.t("back", GardenApi.lang())
 	_back_button.custom_minimum_size = Vector2(34, 34)
 	_back_button.focus_mode = Control.FOCUS_ALL
@@ -90,23 +105,28 @@ func _build() -> void:
 	_back_button.pressed.connect(_on_back_pressed)
 	bar.add_child(_back_button)
 
-	var brand_icon := GardenPaint.FlowerMark.new()
+	var brand_icon := GardenPaint.brand(32)
 	brand_icon.custom_minimum_size = Vector2(32, 34)
 	bar.add_child(brand_icon)
 
 	var brand_box := VBoxContainer.new()
 	brand_box.add_theme_constant_override("separation", 0)
+	brand_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	brand_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_brand_main = GardenWidgets.bold_label("Kelime Bahçesi", 14, GardenTheme.INK)
+	_brand_main = GardenWidgets.bold_label("Kelime Zinciri", 14, GardenTheme.INK)
+	_brand_main.clip_text = true
+	_brand_main.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_brand_main.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	_brand_sub = GardenWidgets.label("Word Garden", 9, GardenTheme.MUTED)
+	_brand_sub = GardenWidgets.label("KELİMELERİ BİRBİRİNE BAĞLA", 9, GardenTheme.MUTED)
+	_brand_sub.clip_text = true
+	_brand_sub.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_brand_sub.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	brand_box.add_child(_brand_main)
 	brand_box.add_child(_brand_sub)
 	bar.add_child(brand_box)
 
 	var spacer := Control.new()
-	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spacer.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bar.add_child(spacer)
 
@@ -118,7 +138,7 @@ func _build() -> void:
 	var coin_icon := GardenPaint.CoinIcon.new()
 	coin_icon.custom_minimum_size = Vector2(19, 19)
 	coin_row.add_child(coin_icon)
-	_coin_label = GardenWidgets.bold_label(str(GardenApi.coins()), 13, Color("6a4d10"))
+	_coin_label = GardenWidgets.bold_label(str(GardenApi.coins()), 13, GardenTheme.LAVENDER_DEEP)
 	coin_row.add_child(_coin_label)
 	coin_chip.add_child(coin_row)
 	bar.add_child(coin_chip)
@@ -160,15 +180,20 @@ func _build() -> void:
 	_toast.add_child(_toast_label)
 	_overlay.add_child(_toast)
 
-	_confetti = GardenPaint.Confetti.new()
-	add_child(_confetti)
-	_confetti.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
 func _update_safe_area() -> void:
 	if _safe == null:
 		return
+	if OS.has_feature("web") or OS.has_feature("mobile"):
+		var window_size := get_window().size
+		if window_size.x > 0:
+			var desired := Vector2i(480, maxi(320, roundi(float(window_size.y) * 480.0 / float(window_size.x))))
+			if get_window().content_scale_size != desired:
+				get_window().content_scale_size = desired
 	var vp := get_viewport_rect().size
+	_brand_main.visible = vp.x >= 400
+	_brand_sub.visible = vp.x >= 400
 	var win := DisplayServer.window_get_size()
 	var safe := DisplayServer.get_display_safe_area()
 	var scale := Vector2(1, 1)
@@ -184,7 +209,8 @@ func _update_safe_area() -> void:
 		left = maxf(0.0, float(safe.position.x)) * scale.x
 		right = maxf(0.0, float(win.x - safe.position.x - safe.size.x)) * scale.x
 	top = clampf(top, 0.0, 64.0)
-	bottom = clampf(bottom, 0.0, 48.0)
+	bottom = maxf(clampf(bottom, 0.0, 48.0), float(_native_keyboard_inset) * scale.y)
+	_topbar.visible = str(_route.get("name", "home")) != "profile" and not (str(_route.get("name", "")) in ["play", "party"] and vp.y - bottom < 620)
 	left = clampf(left, 0.0, 48.0)
 	right = clampf(right, 0.0, 48.0)
 	_safe.add_theme_constant_override("margin_left", int(maxf(16.0, left + 10.0)))
@@ -251,6 +277,8 @@ func _on_language_selected(code: String) -> void:
 
 func _make_screen(route_name: String) -> Control:
 	match route_name:
+		"profile":
+			return ProfileScreenScript.new()
 		"home":
 			return HomeScreenScript.new()
 		"category":
@@ -282,6 +310,7 @@ func _instantiate_route() -> void:
 		_content.remove_child(_screen)
 		_screen.queue_free()
 	_screen = null
+	_topbar.visible = str(_route.get("name", "home")) != "profile" and not (str(_route.get("name", "")) in ["play", "party"] and get_viewport_rect().size.y < 620)
 	var new_screen := _make_screen(str(_route.get("name", "home")))
 	_screen = new_screen
 	new_screen.set("app", self)
@@ -361,7 +390,9 @@ func open_party() -> void:
 
 
 func open_online() -> void:
-	show_screen("online", {})
+	show_confirm("Online" if GardenApi.lang() == "tr" else "Online",
+		"Arkadaşlarınla yarışma modu yakında burada. Şimdilik Oyna ve Parti modlarını deneyebilirsin." if GardenApi.lang() == "tr" else "Challenge friends here soon. Play solo or try Party while we prepare online play.",
+		"Tamam" if GardenApi.lang() == "tr" else "OK", func() -> void: pass)
 
 
 func open_settings() -> void:
@@ -408,9 +439,21 @@ func toast(message: String, duration: float = 2.4) -> void:
 				_toast.visible = false))
 
 
-func celebrate(origin: Vector2 = Vector2(-1, -1)) -> void:
-	if _confetti != null and not GardenApi.reduced_motion():
-		_confetti.start(100, origin)
+func celebrate(_origin: Vector2 = Vector2(-1, -1)) -> void:
+	# Victory card uses a single short fade; no particles.
+	pass
+
+
+func start_tutorial() -> void:
+	var tr := GardenApi.lang() == "tr"
+	var raw := {
+		"id": "tutorial_v2", "category": "daily", "inflected_answers": tr,
+		"title": "İlk zincirin" if tr else "Your first chain",
+		"words": ["SU", "BARDAK", "ALTLIK", "KENAR"] if tr else ["ICE", "CREAM", "SODA", "POP"],
+		"hints": ["", "Su içtiğin kap. BARDAĞI yaz.", "Bardağın altına konur. ALTLIĞI yaz.", "Bir nesnenin dış sınırı. KENARI yaz."] if tr else ["", "ICE ... A frozen dessert. Type CREAM.", "CREAM ... A fizzy drink. Type SODA.", "SODA ... Another word for a fizzy drink. Type POP."],
+		"links": ["su bardağı", "bardak altlığı", "altlık kenarı"] if tr else ["ice cream", "cream soda", "soda pop"]
+	}
+	show_screen("play", {"level": GardenApi.normalize_level(raw, GardenApi.lang()), "tutorial": true})
 
 
 func _modal_open() -> bool:
@@ -420,6 +463,8 @@ func _modal_open() -> bool:
 func show_confirm(title_text: String, body: String, confirm_text: String,
 		on_confirm: Callable, cancel_text: String = "") -> void:
 	close_modal()
+	if is_instance_valid(_screen) and _screen.has_method("set_input_obscured"):
+		_screen.call("set_input_obscured", true)
 	var dim := ColorRect.new()
 	dim.color = Color(0.12, 0.08, 0.2, 0.48)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -456,6 +501,8 @@ func show_confirm(title_text: String, body: String, confirm_text: String,
 
 
 func close_modal() -> void:
+	if is_instance_valid(_screen) and _screen.has_method("set_input_obscured"):
+		_screen.call("set_input_obscured", false)
 	if _modal_layer == null:
 		return
 	for child in _modal_layer.get_children():
