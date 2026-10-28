@@ -68,10 +68,15 @@ func _run() -> void:
 	profile._save()
 	await _settle(0.25)
 	_check(GardenApi.player_name() == "Deniz", "local name saved")
-	_check(_main._screen._tutorial, "profile leads into interactive tutorial")
+	_check(_main._route.name == "home", "profile goes directly to main menu")
+	_main.start_tutorial()
+	await _frames()
 	var play: Control = _main._screen
 	_check(play._keyboard == null, "no custom keyboard in game")
 	_check(play._answer_input.virtual_keyboard_enabled, "native device keyboard enabled")
+	_check(play._answer_input.display_as_slots, "native input is attached to letter slots")
+	_check(play._answer_input.placeholder_text.is_empty(), "no separate answer placeholder")
+	_check(play._answer_input.get_parent() == play, "input does not occupy a footer row")
 	_check(play._session.current == "BARDAĞI", "tutorial asks for inflected word")
 	_check(play._session.word_length(1) == 7, "inflected answer mask length")
 	await _shot("tutorial")
@@ -80,17 +85,24 @@ func _run() -> void:
 	play._submit_button.pressed.emit()
 	await _frames()
 	_check(play._session.active_word_index() == 1, "bare root does not advance")
+	var active_card_id: int = play._chain_view._current_card.get_instance_id()
 	_enter(play, "bardağı")
 	_check(play._chain_view.get_child(0).get_instance_id() == before_nodes, "typing preserves existing cards")
 	play._submit_button.pressed.emit()
 	await _frames()
 	await _shot("morph")
+	_check(play._chain_view._current_card.get_instance_id() == active_card_id, "morph stays in the same active card")
+	await create_timer(0.29).timeout
+	var root_cells := ""
+	for cell in play._chain_view._input_row.get_children():
+		root_cells += cell.get_child(0).text
+	_check(root_cells == "BARDAK", "root appears in the same letter slots before advancing")
+	await _shot("morph_root")
 	_check(play._busy, "input is guarded during root morph")
 	await _settle()
 	_check(play._session.active_word_index() == 2, "correct inflection advances one word")
 	_check(play._chain_view.get_child(1).find_child("SolvedWord", true, false).text == "BARDAK", "inflected answer morphs into root")
-	_enter(play, "altlığı")
-	play._submit_button.pressed.emit()
+	_enter(play, "ltlığı")
 	await _settle()
 	_check(play._chain_view.get_child(2).find_child("SolvedWord", true, false).text == "ALTLIK", "second inflection morphs into root")
 	_enter(play, "kenarı")
@@ -170,7 +182,11 @@ func _run() -> void:
 	_button("Play").pressed.emit()
 	await _frames()
 	play = _main._screen
-	_check(play._tutorial, "new language gets its own tutorial")
+	_check(not play._tutorial, "Play opens game without forcing tutorial")
+	_main.goto_home()
+	_main.start_tutorial()
+	await _frames()
+	play = _main._screen
 	_check(play._session.current == "CREAM", "English compound unchanged")
 	await _solve(play)
 	_check(bool(GardenApi.get_pref("tutorial_v2_en", false)), "English tutorial completion saved")
@@ -209,7 +225,8 @@ func _run() -> void:
 	_main.play_level(GardenApi.all_levels("tr")[0], {}, true)
 	await _settle(0.2)
 	play = _main._screen
-	_check(play._answer_input.get_global_rect().end.y <= 450, "input stays above keyboard-sized viewport")
+	_check(play._answer_input.get_global_rect().end.y <= 450, "letter input stays above keyboard-sized viewport")
+	_check(play._answer_input.get_global_rect().intersects(play._chain_view._input_row.get_global_rect()), "native field overlays the active letter boxes")
 	await _layout("keyboard_height")
 	await _shot("keyboard_height")
 	await _cleanup()
@@ -251,6 +268,8 @@ func _layout(label: String) -> void:
 	for node in _nodes(_main):
 		if not node is Control or not node.is_visible_in_tree() or node is ScrollBar:
 			continue
+		if node is ScrollContainer:
+			_check(node.vertical_scroll_mode == ScrollContainer.SCROLL_MODE_SHOW_NEVER, "scroll bar hidden: " + label)
 		var rect: Rect2 = node.get_global_rect()
 		if rect.size.x > 2:
 			_check(rect.position.x >= -2 and rect.end.x <= width + 2, "no horizontal overflow: " + label + "/" + str(node.name))

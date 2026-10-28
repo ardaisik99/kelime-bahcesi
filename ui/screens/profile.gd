@@ -15,6 +15,7 @@ func _build() -> void:
 	GardenWidgets.clear_children(self)
 	var tr := _selected == "tr"
 	var scroll := ScrollContainer.new()
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
@@ -75,10 +76,7 @@ func _save() -> void:
 	_name.release_focus()
 	if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):
 		DisplayServer.virtual_keyboard_hide()
-	if _first_run and not bool(GardenApi.get_pref("tutorial_v2_" + _selected, false)):
-		app.start_tutorial()
-	else:
-		app.goto_home()
+	app.goto_home()
 
 func handle_back() -> bool:
 	return _first_run

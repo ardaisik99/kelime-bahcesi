@@ -143,10 +143,8 @@ func shake() -> void:
 func scroll_to_current(scroll: ScrollContainer) -> void:
 	if scroll == null or _current_card == null:
 		return
-	# Keep the preceding word visible: it is the clue for the active word.
+	# The active card includes its preceding root, so prioritize its editable slots.
 	var target: Control = _current_card
-	if current_index > 0 and current_index - 1 < get_child_count():
-		target = get_child(current_index - 1) as Control
 	var target_ref: WeakRef = weakref(target)
 	var scroll_ref: WeakRef = weakref(scroll)
 	var tree: SceneTree = get_tree()
@@ -201,7 +199,7 @@ func _current_card_node(index: int) -> PanelContainer:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	v.add_child(_card_head(index))
-	v.add_child(GardenWidgets.bold_label(GardenLoc.t("solve_word", GardenApi.lang()), 15, GardenTheme.MUTED))
+	v.add_child(GardenWidgets.bold_label(GardenApi.upper(str(_words[maxi(0, index - 1)].get("word", ""))) + "  +", 16, GardenTheme.MUTED))
 	_input_row = HBoxContainer.new()
 	_input_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_input_row.add_theme_constant_override("separation", 4)
@@ -224,7 +222,7 @@ func _active_card_session(index: int) -> PanelContainer:
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
 	v.add_child(_card_head(index))
-	v.add_child(GardenWidgets.bold_label(GardenLoc.t("solve_word", GardenApi.lang()), 15, GardenTheme.MUTED))
+	v.add_child(GardenWidgets.bold_label(GardenApi.upper(str(_words[maxi(0, index - 1)].get("word", ""))) + "  +", 16, GardenTheme.MUTED))
 	_input_row = HBoxContainer.new()
 	_input_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_input_row.add_theme_constant_override("separation", 4)
@@ -427,18 +425,20 @@ func _ignore_children(node: Node) -> void:
 
 
 func morph_word(index: int, answer: String, root: String) -> void:
-	if index < 0 or index >= get_child_count():
+	if index != current_index or not is_instance_valid(_input_row):
 		return
-	var label_node := get_child(index).find_child("SolvedWord", true, false) as Label
-	if label_node == null:
-		return
-	label_node.text = GardenApi.upper(answer)
 	if GardenApi.reduced_motion() or GardenApi.upper(answer) == GardenApi.upper(root):
-		label_node.text = GardenApi.upper(root)
 		return
-	var tween := label_node.create_tween()
-	tween.tween_interval(0.26)
-	tween.tween_property(label_node, "modulate:a", 0.0, 0.13).set_trans(Tween.TRANS_SINE)
-	tween.tween_callback(func() -> void: label_node.text = GardenApi.upper(root))
-	tween.tween_property(label_node, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_SINE)
+	var row := _input_row
+	var tween := row.create_tween()
+	tween.tween_interval(0.18)
+	tween.tween_property(row, "modulate:a", 0.0, 0.12).set_trans(Tween.TRANS_SINE)
+	tween.tween_callback(func() -> void:
+		GardenWidgets.clear_children(row)
+		var letters := GardenApi.upper(root)
+		var metrics := _box_metrics(letters.length())
+		for ch in letters:
+			_add_cell(ch, metrics.width, metrics.height, metrics.font, true, true, false))
+	tween.tween_property(row, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_SINE)
+	tween.tween_interval(0.10)
 	await tween.finished

@@ -1,14 +1,14 @@
 # Kelime Zinciri
 
-Türkçe ve İngilizce, mobil öncelikli bir kelime zinciri oyunu. Mevcut Godot **4.5.2** projesinin **0.2** sürümü: mor/beyaz arayüz, yerel profil, uygulamalı öğretici ve doğal tamlama cevapları.
+Türkçe ve İngilizce, mobil öncelikli bir kelime zinciri oyunu. Mevcut Godot **4.5.2** projesinin **0.2.1** sürümü: mor/beyaz arayüz, yerel profil, uygulamalı öğretici ve doğal tamlama cevapları.
 
 **[Webde oyna](https://ardaisik99.github.io/kelime-bahcesi/)**
 
 ## Nasıl oynanır?
 
-İlk kelime verilir. Önceki kelimeyle anlamlı bir tamlama kuran cevabı telefonunun klavyesiyle tam yazıp Gönder'e dokunursun. Örneğin **SU → BARDAĞI**. Doğru cevap yumuşak bir animasyonla **BARDAK** olur; sonraki cevap **ALTLIĞI**, sonraki kök **ALTLIK** olur. Yanlış veya eksik cevap ilerletmez. Son kelime doğrulanınca bölüm tamamlanır.
+İlk kelime verilir. Harf kutularına dokunup telefonunun klavyesiyle eksik harfleri yazarsın. Doğru cevap tamamlanınca otomatik doğrulanır; ayrı bir cevap alanı yoktur. Örneğin **SU → BARDAĞI**. Doğru cevap yumuşak bir animasyonla **BARDAK** olur; sonraki cevap **ALTLIĞI**, sonraki kök **ALTLIK** olur. Yanlış veya eksik cevap ilerletmez. Son kelime doğrulanınca bölüm tamamlanır.
 
-İlk açılışta oyuncu adı ve dil seçilir. Öğreticide gerçek bir zinciri tamamlayarak oyun öğrenilir. Ayarlar'da ad, dil, ses ve hareket tercihi değiştirilebilir. Öğretici menüden yeniden açılabilir; gerçek altın ve ilerlemeyi etkilemez.
+İlk açılışta oyuncu adı ve dil seçilir. Profil tamamlanınca ana menü açılır. Öğretici, menüdeki Nasıl oynanır düğmesinden isteğe bağlı olarak açılır ve gerçek bir zincirle oyunu öğretir. Ayarlar'da ad, dil, ses ve hareket tercihi değiştirilebilir. Öğretici menüden yeniden açılabilir; gerçek altın ve ilerlemeyi etkilemez.
 
 - Her dilde 18 bölüm; toplam 36, üç kategori. Genel yolculuk ve kategoriler kolaydan zora sıralanır.
 - Dil başına 100 başlangıç altını; ipucu 10, bir rastgele harf 15, ilk bölüm tamamlama ödülü 25. Tekrarda ödül yoktur.

@@ -1,3 +1,14 @@
+# 0.2.1 etkileşim düzeltmeleri
+
+- Profil kaydı doğrudan ana menüye gider. Oyna doğrudan bölümü açar; öğretici menüden isteğe bağlı başlatılır.
+- Webde HTML input görünmezdir; ad ve yer tutucu Godot tarafından tek katmanda çizilir. Girişin dokunma alanı çizim öncesinde güncellenir ve kaydırma alanına kırpılır; bağımsız kayan metin katmanı yoktur.
+- Oyunda ayrı cevap alanı yoktur. Görünmez native giriş aktif harf kutularının üstüne yerleşir; kullanıcı kutulara dokunur. Verilen ilk harfi tekrar yazmadan kalan harflerle veya tam kelimeyle cevap verebilir. Doğru cevap tamamlanınca otomatik doğrulanır.
+- Ekli kelime, aynı aktif kartın aynı harf satırında animasyonla köke dönüşür; dönüşüm tamamlanınca zincir ilerler. Web klavyesinin odağı cevaplar arasında korunur.
+- Bütün kaydırma çubukları gizlidir; dokunarak veya tekerlekle kaydırma devam eder.
+- Web oyun paketi sürümlü URL ile yüklenir; eski tarayıcı önbelleği yeni giriş köprüsüyle karışmaz.
+
+Aşağıdaki 0.2 tasarımının bu maddelerle değiştirilmeyen kararları korunur.
+
 # Kelime Zinciri — 0.2 tasarım ve davranış kararları
 
 28 Ekim 2026. Mevcut Godot 4.5.2 projesi üzerine uygulanır. Eski OpenCode ajanları veya görev sahipliği kuralları kullanılmaz.

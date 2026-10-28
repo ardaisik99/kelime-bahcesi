@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
-<meta name="application-version" content="0.2.0">
+<meta name="application-version" content="0.2.1">
 <meta name="theme-color" content="#7541dc">
 <meta name="description" content="Anlamlı tamlamalar kur, kelimeleri bağla. Kelime Zinciri: Türkçe ve İngilizce kelime oyunu.">
 <title>Kelime Zinciri</title>
@@ -26,30 +26,33 @@ $GODOT_HEAD_INCLUDE
 // The browser owns text composition; Godot receives complete Unicode strings.
 window.KelimeInput = {
  fields: new Map(),
- create(id,onInput,onSubmit,value,placeholder,maxLength){
+ create(id,onInput,onSubmit,value,placeholder,maxLength,onFocus){
   this.remove(id);
   const input=document.createElement('input');
   input.type='text';input.value=value;input.placeholder=placeholder;
   input.maxLength=maxLength||32;input.autocomplete='off';input.spellcheck=false;
   input.autocapitalize='none';input.enterKeyHint='send';input.setAttribute('aria-label',placeholder);
-  input.style.cssText='position:fixed;z-index:5;display:none;min-width:0;border:2px solid transparent;border-radius:16px;background:#fff;color:#24163b;padding:8px 14px;outline:none;font-family:system-ui,sans-serif;box-sizing:border-box;';
-  input.addEventListener('focus',()=>input.style.borderColor='#7541dc');
-  input.addEventListener('blur',()=>input.style.borderColor='transparent');
+  input.style.cssText='position:fixed;z-index:5;display:none;min-width:0;opacity:0;border:2px solid transparent;border-radius:16px;background:#fff;color:#24163b;padding:8px 14px;outline:none;font-family:system-ui,sans-serif;box-sizing:border-box;';
+  input.addEventListener('focus',()=>onFocus(true));
+  input.addEventListener('blur',()=>onFocus(false));
   input.addEventListener('input',()=>{if(!input.composing)onInput(input.value);});
   input.addEventListener('compositionstart',()=>input.composing=true);
   input.addEventListener('compositionend',()=>{input.composing=false;onInput(input.value);});
   input.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'&&!e.isComposing){e.preventDefault();onSubmit();}});
   document.body.appendChild(input);this.fields.set(id,input);
  },
- place(id,x,y,w,h,vw,vh){const input=this.fields.get(id);if(!input)return;
+ place(id,x,y,w,h,vw,vh,left,top,right,bottom){const input=this.fields.get(id);if(!input)return;
   const r=document.getElementById('canvas').getBoundingClientRect();
-  Object.assign(input.style,{display:'block',left:(r.left+x/vw*r.width)+'px',top:(r.top+y/vh*r.height)+'px',width:(w/vw*r.width)+'px',height:(h/vh*r.height)+'px',fontSize:Math.max(16,17*r.width/vw)+'px'});
+  Object.assign(input.style,{display:'block',left:(r.left+x/vw*r.width)+'px',top:(r.top+y/vh*r.height)+'px',width:(w/vw*r.width)+'px',height:(h/vh*r.height)+'px',fontSize:Math.max(16,17*r.width/vw)+'px',clipPath:'inset('+(top/vh*r.height)+'px '+(right/vw*r.width)+'px '+(bottom/vh*r.height)+'px '+(left/vw*r.width)+'px)'});
  },
+ focus(id){const input=this.fields.get(id);if(input)input.focus({preventScroll:true});},
  value(id,value){const input=this.fields.get(id);if(input&&input.value!==value)input.value=value;},
  hide(id){const input=this.fields.get(id);if(input)input.style.display='none';},
  remove(id){const input=this.fields.get(id);if(input){input.remove();this.fields.delete(id);}}
 };
-const engine = new Engine($GODOT_CONFIG);
+const engineConfig = $GODOT_CONFIG;
+engineConfig.mainPack = engineConfig.executable + ".pck?v=0.2.1";
+const engine = new Engine(engineConfig);
 const progress = document.getElementById('progress');
 const statusText = document.getElementById('status');
 const retry = document.getElementById('retry');

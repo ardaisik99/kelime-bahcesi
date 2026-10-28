@@ -12,6 +12,7 @@ func _build() -> void:
 	var tr := GardenApi.lang() == "tr"
 	var lang := GardenApi.lang()
 	var scroll := ScrollContainer.new()
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
@@ -156,10 +157,9 @@ func _mode(title: String, subtitle: String, index: int, action: Callable) -> But
 	return b
 
 func _play() -> void:
-	if not bool(GardenApi.get_pref("tutorial_v2_" + GardenApi.lang(), false)):
-		app.start_tutorial()
-	elif not _next_level.is_empty():
+	if not _next_level.is_empty():
 		app.play_level(_next_level)
+
 
 func _ignore_mouse(node: Node) -> void:
 	if node is Control:

@@ -113,6 +113,7 @@ func setup(params: Dictionary = {}) -> void:
 			store.call("set_last_level", _lang, str(_level.get("id", "")))
 	_build()
 	resized.connect(_adjust_compact_layout)
+	RenderingServer.frame_pre_draw.connect(_position_letter_input)
 	_adjust_compact_layout.call_deferred()
 
 
@@ -203,7 +204,10 @@ func _refresh_from_session() -> void:
 	if _transitioning:
 		return
 	if _chain_view != null and is_instance_valid(_chain_view) and _session != null:
+		var previous_row := _chain_view._input_row
 		_chain_view.setup_session(_session, _level, _mode == "party", _mode == "party")
+		if previous_row != _chain_view._input_row:
+			_queue_letter_position.call_deferred()
 		if _current != _last_scrolled_index:
 			_last_scrolled_index = _current
 			_chain_view.scroll_to_current(_scroll)
@@ -219,13 +223,13 @@ func _on_word_solved(index: int) -> void:
 	_busy = true
 	_transitioning = true
 	_update_native_state()
+	_show_feedback(GardenLoc.t("correct", _lang), GardenTheme.LAVENDER_DEEP)
 	GardenApi.play_sound("correct")
 	_finish_word_transition.call_deferred(index)
 
 
 func _finish_word_transition(index: int) -> void:
 	if _chain_view != null:
-		_chain_view.setup_session(_session, _level, false, false)
 		await _chain_view.morph_word(index, str(_session.words[index]), str((_words[index] as Dictionary).get("word", "")))
 	if not is_inside_tree():
 		return
@@ -345,10 +349,10 @@ func _build() -> void:
 
 	_box.add_child(_header())
 	_scroll = ScrollContainer.new()
+	_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	_scroll.custom_minimum_size.y = 120
 	_box.add_child(_scroll)
 	var chain_margin := MarginContainer.new()
@@ -376,30 +380,51 @@ func _build() -> void:
 	if _tutorial:
 		_tutorial_copy = GardenWidgets.label("", 15, GardenTheme.LAVENDER_DEEP, HORIZONTAL_ALIGNMENT_LEFT, true)
 		_box.add_child(_tutorial_copy)
-	var input_row := HBoxContainer.new()
-	input_row.add_theme_constant_override("separation", 8)
-	_answer_input = GardenWidgets.line_edit("Cevabını yaz…" if _lang == "tr" else "Type your answer…", "", 24)
+	_answer_input = DeviceLineEdit.new()
+	_answer_input.name = "LetterInput"
+	_answer_input.display_as_slots = true
+	_answer_input.clip_to = _scroll
+	_answer_input.max_length = 24
 	_answer_input.virtual_keyboard_enabled = true
-	_answer_input.virtual_keyboard_type = LineEdit.KEYBOARD_TYPE_DEFAULT
 	_answer_input.emoji_menu_enabled = false
 	_answer_input.keep_editing_on_text_submit = true
 	_answer_input.text_changed.connect(_on_native_changed)
 	_answer_input.text_submitted.connect(func(_text: String) -> void: _on_submit())
-	input_row.add_child(_answer_input)
+	add_child(_answer_input)
 	_submit_button = GardenWidgets.button("Gönder" if _lang == "tr" else "Send", "primary", 50)
 	_submit_button.focus_mode = Control.FOCUS_NONE
 	_submit_button.pressed.connect(_on_submit)
-	input_row.add_child(_submit_button)
-	_box.add_child(input_row)
-	_keyboard_caption = GardenWidgets.label("Telefonunun klavyesiyle yaz." if _lang == "tr" else "Use your device keyboard.", 12, GardenTheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER)
-	_box.add_child(_keyboard_caption)
+	_box.add_child(_submit_button)
 	_chain_view.card_tapped.connect(func(index: int) -> void:
-		if index == _active_index():
-			_answer_input.grab_focus())
+		if index == _chain_view.current_index and not _busy:
+			(_answer_input as DeviceLineEdit).focus_device())
+	_scroll.get_v_scroll_bar().value_changed.connect(func(_value: float) -> void: _position_letter_input.call_deferred())
 	_update_native_state()
+	_queue_letter_position.call_deferred()
+
+
+func _queue_letter_position() -> void:
+	await get_tree().process_frame
+	if is_inside_tree():
+		_position_letter_input()
+
+
+func _position_letter_input() -> void:
+	if not is_instance_valid(_answer_input) or not is_instance_valid(_chain_view) or _finished:
+		return
+	var row := _chain_view._input_row
+	if not is_instance_valid(row) or row.get_child_count() == 0:
+		return
+	var rect: Rect2 = row.get_child(0).get_global_rect()
+	rect = rect.merge(row.get_child(row.get_child_count() - 1).get_global_rect())
+	var hit_rect := rect.intersection(_scroll.get_global_rect())
+	_answer_input.mouse_filter = Control.MOUSE_FILTER_STOP if hit_rect.has_area() else Control.MOUSE_FILTER_IGNORE
+	_answer_input.position = hit_rect.position - global_position
+	_answer_input.size = hit_rect.size
 
 
 func _adjust_compact_layout() -> void:
+	_queue_letter_position.call_deferred()
 	var compact := size.y < 570
 	for control in [_title_label, _actions_row, _feedback, _keyboard_caption]:
 		if is_instance_valid(control):
@@ -411,7 +436,13 @@ func _on_native_changed(value: String) -> void:
 		return
 	# Accept whole words from native keyboards, paste, dictation and IME.
 	# No key-event simulation, guessing or automatic Turkish suffix stripping.
-	_session.set_active_input(value)
+	var answer := GardenApi.upper(value, _lang)
+	var first := str(_session.current).left(1)
+	if not answer.is_empty() and not answer.begins_with(first):
+		answer = first + answer
+	_session.set_active_input(answer)
+	if _session.can_submit() and str(_session.typed_answer()) == str(_session.current):
+		_on_submit.call_deferred()
 
 
 func _update_native_state() -> void:
@@ -423,7 +454,7 @@ func _update_native_state() -> void:
 	if _tutorial_copy != null and is_instance_valid(_tutorial_copy) and _active_index() > 0:
 		var i := _active_index()
 		if _lang == "tr":
-			var explanations := ["", "1 / 3   SU ile bir tamlama kur: su BARDAĞI. Cevabını tam yazıp Gönder'e dokun.", "2 / 3   BARDAĞI, BARDAK oldu. Şimdi bardak ALTLIĞI. ALTLIĞI yaz ve gönder.", "3 / 3   ALTLIĞI, ALTLIK oldu. Şimdi altlık KENARI. KENARI yaz ve zinciri tamamla."]
+			var explanations := ["", "1 / 3   SU ile bir tamlama kur: su BARDAĞI. Harf kutularına dokunup BARDAĞI yaz.", "2 / 3   BARDAĞI, BARDAK oldu. Şimdi bardak ALTLIĞI. Kutulara ALTLIĞI yaz.", "3 / 3   ALTLIĞI, ALTLIK oldu. Şimdi altlık KENARI. Kutulara KENARI yaz ve zinciri tamamla."]
 			_tutorial_copy.text = explanations[mini(i, 3)]
 		else:
 			_tutorial_copy.text = str(_session.hints[i])
@@ -633,9 +664,9 @@ func _show_victory() -> void:
 	dim.mouse_filter = Control.MOUSE_FILTER_STOP
 	_victory_layer.add_child(dim)
 	var scroll := ScrollContainer.new()
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	dim.add_child(scroll)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL

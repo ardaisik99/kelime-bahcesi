@@ -1,3 +1,11 @@
+# 0.2.1 güncel kabul kontrolü
+
+Profil → ana menü → Oyna geçişi; ayrı cevap alanının yokluğu; harf kutularına bağlı native giriş; sabit ilk harfi tekrar yazmadan otomatik doğrulama; aynı aktif kartta ve aynı kutu satırında BARDAĞI → BARDAK dönüşümü; bütün ekranlarda gizli kaydırma çubukları kontrol edilir. Webde gerçek dokunma/klavye odağı cevaplar arasında korunur. Görünür profil metni artık ayrı bir DOM katmanında değildir.
+
+Güncel gerçek pencere UI koşumu: **719 kontrol geçti**, hata ve kaynak sızıntısı yok. Başsız UI koşumu: **702 kontrol geçti**. Tam `-IncludeUI -Strict` koşumu: **5 paket, 0 hata, 0 atlama**. Fiziksel telefon testi sınırı devam eder.
+
+Önceki sürümün test geçmişi aşağıda korunur.
+
 # 0.2 güncel doğrulama — 28 Ekim 2026
 
 Godot 4.5.2, Windows, Compatibility renderer. Aşağıdaki eski sürüm kanıtları tarihçe olarak korunur.
