@@ -26,7 +26,7 @@ jobs:
       GODOT_VERSION: "4.5.2"
       ANDROID_BUILD_TOOLS: "35.0.0"
       WORD_GARDEN_SERVER_URL: ${{ inputs.server_url || vars.WORD_GARDEN_SERVER_URL }}
-      GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ runner.temp }}/word-garden-release.p12
+      GODOT_ANDROID_KEYSTORE_RELEASE_PATH: /tmp/word-garden-release.p12
       GODOT_ANDROID_KEYSTORE_RELEASE_USER: wordgarden
       GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
     steps:
