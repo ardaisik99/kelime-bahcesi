@@ -8,7 +8,7 @@
 <meta name="description" content="Anlamlı tamlamalar kur, kelimeleri bağla. Kelime Zinciri: Türkçe ve İngilizce kelime oyunu.">
 <title>Kelime Zinciri</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f6fc;color:#24163b;font-family:system-ui,sans-serif}#canvas{display:block;width:100%;height:100%;outline:none}#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f7f6fc;padding:28px;text-align:center}#loading svg{width:92px;height:92px}h1{font-size:32px;margin:22px 0 8px;letter-spacing:-1px}.tag{font-size:11px;color:#81778f;letter-spacing:2px}progress{appearance:none;border:0;border-radius:8px;height:5px;width:min(280px,80vw);margin-top:42px;background:#eae5f1}progress::-webkit-progress-bar{background:#eae5f1;border-radius:8px}progress::-webkit-progress-value{background:#7541dc;border-radius:8px}progress::-moz-progress-bar{background:#7541dc;border-radius:8px}#status{font-size:13px;color:#81778f;margin-top:14px;max-width:340px;line-height:1.6}#retry{margin-top:18px;background:#7541dc;color:white;border:0;padding:14px 24px;border-radius:14px;font:inherit;cursor:pointer}noscript{position:fixed;inset:0;background:#f7f6fc;padding:35vh 24px;text-align:center;z-index:10}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f6fc;color:#24163b;font-family:system-ui,sans-serif}#canvas{display:block;width:min(100%,480px);height:100%;margin:0 auto;outline:none}#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f7f6fc;padding:28px;text-align:center}#loading svg{width:92px;height:92px}h1{font-size:32px;margin:22px 0 8px;letter-spacing:-1px}.tag{font-size:11px;color:#81778f;letter-spacing:2px}progress{appearance:none;border:0;border-radius:8px;height:5px;width:min(280px,80vw);margin-top:42px;background:#eae5f1}progress::-webkit-progress-bar{background:#eae5f1;border-radius:8px}progress::-webkit-progress-value{background:#7541dc;border-radius:8px}progress::-moz-progress-bar{background:#7541dc;border-radius:8px}#status{font-size:13px;color:#81778f;margin-top:14px;max-width:340px;line-height:1.6}#retry{margin-top:18px;background:#7541dc;color:white;border:0;padding:14px 24px;border-radius:14px;font:inherit;cursor:pointer}noscript{position:fixed;inset:0;background:#f7f6fc;padding:35vh 24px;text-align:center;z-index:10}
 </style>
 $GODOT_HEAD_INCLUDE
 </head>
@@ -60,6 +60,16 @@ if(missing.length){statusText.textContent='Bu tarayıcı WebGL 2 veya WebAssembl
 else engine.startGame({onProgress(current,total){if(total>0){progress.value=current/total*100;statusText.textContent='Oyun yükleniyor · %'+Math.round(progress.value);}else{progress.removeAttribute('value');statusText.textContent='Oyun hazırlanıyor…';}}}).then(()=>document.getElementById('loading').remove()).catch(fail);
 // Keep the canvas above the phone keyboard. visualViewport handles browsers
 // which overlay the keyboard instead of resizing the layout viewport.
-if(window.visualViewport){visualViewport.addEventListener('resize',()=>{document.getElementById('canvas').style.height=visualViewport.height+'px';});}
+function resizeCanvas(){
+ const canvas=document.getElementById('canvas');
+ const width=Math.min(window.innerWidth,480);
+ const height=window.visualViewport?visualViewport.height:window.innerHeight;
+ const ratio=Math.min(window.devicePixelRatio||1,2);
+ canvas.style.width=width+'px';canvas.style.height=height+'px';
+ canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);
+}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+if(window.visualViewport)visualViewport.addEventListener('resize',resizeCanvas);
 </script>
 </body></html>
