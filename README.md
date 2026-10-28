@@ -4,6 +4,11 @@
 
 > **Durum: oynanabilir kaynak proje.** Çekirdek, içerik, 480×900 arayüz ve gerçek sunucuyla TR/EN yarışma akışları test edildi. Cloudflare deneme derlemesi geçti; canlı dağıtım yapılmadı. **İmzalı APK/IPA, Android/iOS cihaz testi ve mağaza yayını henüz yoktur.** Kanıtlar ve sınırlar: [docs/TESTING.md](docs/TESTING.md).
 
+## Oyna
+
+- **Web:** [ardaisik99.github.io/kelime-bahcesi](https://ardaisik99.github.io/kelime-bahcesi/) — indirme gerekmez, tarayıcıdan oyna.
+- **Android:** APK dosyası [Releases](https://github.com/ardaisik99/kelime-bahcesi/releases) bölümünde. Dosyayı indirip telefonuna kur.
+
 ## Özellikler
 
 Görseller: [Ana ekran](docs/screenshots/home.png) · [Oyun](docs/screenshots/play.png) · [Parti](docs/screenshots/party.png) · [Çevrimiçi yarışma](docs/screenshots/online_tr_match.png)
