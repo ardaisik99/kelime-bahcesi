@@ -66,8 +66,11 @@ def setup() -> None:
     destination = data_home / "godot/export_templates" / f"{version}.stable"
     destination.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(temporary / templates_zip) as archive:
-        for filename in ("android_debug.apk", "android_release.apk", "version.txt"):
-            (destination / filename).write_bytes(archive.read("templates/" + filename))
+        for filename in ("android_debug.apk", "android_release.apk", "version.txt", "web_debug.zip", "web_release.zip", "web_nothreads_debug.zip", "web_nothreads_release.zip"):
+            try:
+                (destination / filename).write_bytes(archive.read("templates/" + filename))
+            except KeyError:
+                pass
     with open(os.environ["GITHUB_PATH"], "a", encoding="utf-8") as file:
         file.write(str(bin_dir) + "\n")
     print(f"Godot {version}: Android templates verified and ready.")
